@@ -1,0 +1,4 @@
+interface:
+  display_name: "Electrobun"
+  short_description: "Build and debug Electrobun desktop apps."
+  default_prompt: "Use Electrobun guidance for this desktop app task."
