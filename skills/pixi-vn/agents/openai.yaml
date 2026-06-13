@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pixi VN"
+  short_description: "Build and debug Pixi VN games."
+  default_prompt: "Use $pixi-vn to build, edit, or debug this Pixi VN game."

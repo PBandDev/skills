@@ -27,6 +27,7 @@ npx skills add PBandDev/skills --skill electrobun
 | Skill | Use when |
 | --- | --- |
 | `electrobun` | Building, editing, or debugging Electrobun desktop apps, including config, BrowserWindow/BrowserView, typed RPC, `views://` assets, bundling, updates, native renderers, and Electron migration issues. |
+| `pixi-vn` | Building, editing, debugging, or reviewing Pixi VN visual novel and 2D game projects, including labels, narration, storage, save/load, canvas assets, UI layers, sound, Ink, and templates. |
 
 ## Layout
 
