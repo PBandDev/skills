@@ -22,6 +22,14 @@ Install one skill by name:
 npx skills add PBandDev/skills --skill electrobun
 ```
 
+## Publish to skills.sh
+
+skills.sh indexes public GitHub skills through `skills` CLI installs. After pushing changes to GitHub, run the install from a temporary directory so the local repository stays untouched:
+
+```bash
+tmp="$(mktemp -d)" && cd "$tmp" && npx skills add PBandDev/skills --skill pixi-vn --yes
+```
+
 ## Skills
 
 | Skill | Use when |
