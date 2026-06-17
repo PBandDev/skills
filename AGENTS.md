@@ -7,6 +7,7 @@ This repository publishes reusable agent skills through GitHub and skills.sh. Ke
 - Skills live in `skills/<skill-name>/`.
 - Each skill needs `SKILL.md` with `name` and `description` frontmatter.
 - `agents/openai.yaml` is optional UI metadata for Codex-compatible surfaces.
+- `README.md` this is a user-facing README for the repository as a whole. Should not contain development-specific notes.
 
 ## Skill Authoring
 
