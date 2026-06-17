@@ -101,7 +101,7 @@ Use Pixi VN-managed `canvas` components for scene elements that must restore thr
 | Animation | `canvas.animate`, built-in transitions, tickers; use `canvas.completeTickerOnStepEnd(...)` when completion matters |
 | Cleanup | `canvas.remove(alias)` or `canvas.removeAll()` intentionally |
 
-Direct PixiJS is acceptable for custom rendering, but keep saveable scene state in Pixi VN-managed aliases/components when possible. Do not invent object config shapes for `canvas.add`; inspect the project's helpers or the official component constructors such as `Sprite`, `ImageSprite`, `ImageContainer`, `Container`, `Text`, and `VideoSprite`. Do not assume helper import paths; copy them from existing project code or official docs before importing from `@drincs/pixi-vn`. For remote assets, verify CORS, network availability, and web-play size tradeoffs.
+Direct PixiJS is acceptable for custom rendering, but keep saveable scene state in Pixi VN-managed aliases/components when possible. Do not invent object config shapes for `canvas.add`; inspect the project's helpers or the official component constructors such as `Sprite`, `ImageSprite`, `ImageContainer`, `Container`, `Text`, and `VideoSprite`. An `ImageContainer` is one saveable unit built from stacked `ImageSprite` layers (e.g. body + eyes + mouth), addressed by an array of aliases (`# show imagecontainer <id> [body eyes mouth]` in Ink); swap one layer to change an expression. Do not assume helper import paths; copy them from existing project code or official docs before importing from `@drincs/pixi-vn`. For remote assets, verify CORS, network availability, and web-play size tradeoffs.
 
 ## UI Integration
 
@@ -126,6 +126,8 @@ Always test the behavior touched:
 
 Use browser devtools for console, network, and PixiJS DevTools when configured. For mobile or responsive work, test mobile Chrome-sized viewports.
 
+**Read live engine state before asserting it.** Don't infer what the engine "should" show — inspect it in the running app. `narration`, `storage`, `canvas`, and `stepHistory` are runtime singletons: check `narration.dialogue` (including `.character`), storage values/flags, and mounted `canvas` aliases directly. In a Vite dev server for example, you can reach them from the devtools console by dynamic-importing the pre-bundled dep module (`import('/node_modules/.vite/deps/@drincs_pixi-vn.js?v=…')`).
+
 ## Common Mistakes
 
 | Mistake | Fix |
@@ -137,6 +139,7 @@ Use browser devtools for console, network, and PixiJS DevTools when configured. 
 | Passing invented object literals to `canvas.add` | Use existing helpers or documented Pixi VN component constructors |
 | Renaming labels or reordering old steps in a shipped game | Treat as save migration work; preserve stable ids or add compatibility handling |
 | Assuming HTML UI state is saved | Store restoreable game truth in Pixi VN state, then derive UI from it |
+| Expecting edited Ink/label source to change the running screen | The official template restores a refresh-save snapshot on reload and auto-saves on page-leave, so the screen shows saved **state**, not your latest source; only `Game.start` re-runs a label from source |
 | Using deprecated restore navigation overloads by default | Prefer `Game.init({ navigate })` / `Game.onNavigate(...)`, then `Game.restoreGameState(saveData)` |
 | Trusting nested percent layout or mobile canvas scaling without testing | Verify nested align/percent layouts and mobile Chrome behavior |
 
