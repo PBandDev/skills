@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anima Prompting"
+  short_description: "Format and enhance Anima prompts."
+  default_prompt: "Use $anima-prompting to format, clean, or enhance this prompt for Anima."
