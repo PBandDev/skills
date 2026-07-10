@@ -79,10 +79,10 @@ Anima uses Danbooru-style rating/safety tags: `safe`, `sensitive`, `nsfw`, `expl
 Default negative:
 
 ```text
-worst quality, low quality, score_1, score_2, score_3, artist name
+worst quality, low quality, score_1, score_2, score_3, artist name, blurry, jpeg artifacts, chromatic aberration
 ```
 
-Keep it short. Move exclusions such as "no hat" or "avoid blood" into the negative prompt. Do not add giant generic negatives like bad hands, extra fingers, watermark, text, blurry, malformed anatomy, etc. unless the user asks or the exclusion is specific to the prompt.
+Keep it short. Move exclusions such as "no hat" or "avoid blood" into the negative prompt. Do not add giant generic negatives like bad hands, extra fingers, watermark, text, malformed anatomy, etc. unless the user asks or the exclusion is specific to the prompt.
 
 Only move explicit exclusions into the negative prompt. Descriptors like "non-anime", "source-style", "not photorealistic", or "DeviantArt-style" should stay as positive intent, not become automatic negatives. Add `anime`, `manga`, `photo`, or similar negatives only when the user says no, avoid, exclude, without, or remove.
 
@@ -161,7 +161,7 @@ Positive prompt:
 masterpiece, best quality, score_7, safe, 1girl, Frieren, Sousou no Frieren, @yusuke murata, staff, quiet library
 
 Negative prompt:
-worst quality, low quality, score_1, score_2, score_3, artist name
+worst quality, low quality, score_1, score_2, score_3, artist name, blurry, jpeg artifacts, chromatic aberration
 
 Recommended settings:
 Steps: 30-50
