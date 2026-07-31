@@ -70,6 +70,8 @@ masterpiece, best quality, score_7, safe,
 
 Swap the rating tag to match the request (see Rating Tags below), and follow user-stated quality tags (for example `score_9`, `highres`) when given.
 
+Score tags are version-conditional — see Model Versions.
+
 ## Rating Tags
 
 Anima uses Danbooru-style rating/safety tags: `safe`, `sensitive`, `nsfw`, `explicit`. Use exactly one, placed in the quality/meta prefix. Default to `safe`; if the user names a rating or the requested content clearly implies one, use that tag instead.
@@ -86,6 +88,28 @@ Keep it short. Move exclusions such as "no hat" or "avoid blood" into the negati
 
 Only move explicit exclusions into the negative prompt. Descriptors like "non-anime", "source-style", "not photorealistic", or "DeviantArt-style" should stay as positive intent, not become automatic negatives. Add `anime`, `manga`, `photo`, or similar negatives only when the user says no, avoid, exclude, without, or remove.
 
+## Weighting
+
+`(tag:1.4)` sets an exact weight; bare `(tag)` is ×1.1 per paren layer. Anima needs noticeably higher numbers than SDXL — the official example is `(chibi:2)`, and `:2` is normal use here, not an extreme. Below 1 quiets a tag (`(anime coloring:0.8)`).
+
+Each tag's weight applies independently, so weighting one tag doesn't warp its neighbors, and `(a:2), (b:2)` behaves the same as `(a, b:2)`. There is no known ceiling — stacking many high weights is untested, so change one thing at a time.
+
+Not supported: `[tag]` down-weighting, `[a:b:0.5]` prompt editing, `[a|b]` alternation. Escape literal parens inside tags: `watercolor \(medium\)`.
+
+## Model Versions
+
+The prefix and settings here are tuned for Base. Confirm which checkpoint is loaded before finalizing.
+
+
+| Version   | Score tags                                                                                                                                                                   | Steps / CFG   |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| Base      | Official prefix as-is (`score_7`)                                                                                                                                            | 30-50 / 4-5   |
+| Aesthetic | Avoid `score_*` in positive **and** negative — it was trained with quality tags stripped, so score tags push it toward slop. `masterpiece, best quality` is safe to keep      | 30-50 / 4-5   |
+| Turbo     | Not documented; start with Aesthetic's rule                                                                                                                                  | 8-12 / **1**  |
+
+
+Turbo-baked merges follow Turbo settings. Verify your own merges on one image before batching.
+
 ## Settings
 
 Default:
@@ -95,10 +119,13 @@ Default:
 - Sampler: `er_sde`
 - Resolution: total pixel area between `512^2` and `1536^2`; suggestions should be divisible by 64 and near or under `1536x1536` total pixels.
 
+Turbo checkpoints override steps/CFG — see Model Versions.
+
 Sampler notes:
 
 - `er_sde`: neutral, flatter colors, sharp lines; use as default.
 - `euler_a`: softer, thinner lines; can lean 2.5D and tolerate slightly higher CFG.
+- `euler`: a bit more creative than `er_sde`; good on Turbo and Aesthetic, which are naturally more stable.
 - `dpmpp_2m_sde_gpu`: similar to `er_sde` but more varied/creative; can become too wild.
 - `beta57` scheduler can help painterly texture when available through RES4LYF.
 
@@ -188,6 +215,8 @@ Suggested aspect ratio: 3:4, for example 1280x1728
 | Forgetting safety tag conflicts                        | Use exactly one safety tag unless the user explicitly asks otherwise.              |
 | Listing multiple known characters with no descriptions | Add concise visual descriptions to reduce blending.                                |
 | Ignoring `preferences.local.md`                        | If it exists in the skill directory, its overrides win over the defaults here.     |
+| Using SDXL-scale weights (`1.1`, `1.2`)                | Anima needs higher — `(tag:2)` is normal use.                                      |
+| Ignoring which Anima version is loaded                 | Aesthetic drops `score_*`; Turbo is CFG 1 / 8-12 steps. See Model Versions.        |
 
 ## Resources
 
