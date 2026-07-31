@@ -1,0 +1,208 @@
+/*
+  tracker-board - styles for the AI-corrected panel.
+
+  Every selector here is scoped to `#corrections-panel`, which is asserted. Media queries are
+  not restricted, because the scoping is on the selector rather than on the context.
+
+  ## Neither layer is styled here, and both are deliberate
+
+  Layer B paints a card's ticket id, and a card lives in `#board`. No selector this file is
+  allowed to write can reach one, so the division is: `corrections.js` sets `data-corrected` on
+  the id, and `board.css` - the stylesheet that owns the element - draws it, with the board's
+  own tokens. That rule is asserted in `board-ui.test.ts`, because deleting it breaks nothing
+  any render can see: the attribute goes on being set and the marker simply stops appearing.
+
+  It covers both elements a Ticket prints its id in - `.tid` on a card in a column and `.lid` on
+  a ledger row inside an opened Feature in the collapsed Done column - in one rule, so the two
+  cannot drift apart. `corrections.js` names both, and its `named` flags have to keep agreeing
+  with that selector: naming a shape nothing paints would tell assistive technology something a
+  sighted reader is not told, which is the inversion the panel exists to close.
+
+  Layer C needs nothing here either. The per-column control is a `.chip` inside a `.seg`, both
+  of which `board.css` styles globally, so it arrives already wearing the board's treatment -
+  including its pressed state - and stays in step with the Done-column control it sits below.
+
+  Inherits every token from `board.css`: --ink, --accent, --rule, the state colours, and the
+  type scale (--t-body 16px, --t-sec 14.5px, --t-meta 13px, --t-lab 12px, which is the floor).
+  Do not restate a token here; a second definition is a second thing to keep in step.
+
+  Two rules the board keeps everywhere, and this file with it: no hatched or striped fill -
+  solid low-alpha tint plus a left rule instead - and no remote request of any kind, so no
+  webfont and no embedded or remote image reference of any kind.
+*/
+
+#corrections-panel .corrbody {
+  display: grid;
+  gap: 12px;
+  max-width: 82ch;
+}
+
+#corrections-panel .corrlead {
+  margin: 0;
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/*
+  The per-column breakdown, every column including the ones at zero.
+
+  The header control is drawn only where there is something to filter, so this list is the
+  only place a reader learns that a column was counted and came back empty - which is a
+  different fact from a column that was never looked at.
+*/
+#corrections-panel .corrrows {
+  display: grid;
+  /*
+    Three across, so six columns come out as two balanced rows rather than as a full row and a
+    ragged one. `auto-fit` was tried first and measured at 1800px: the 82ch measure caps this
+    block at ~707px, which fits four, and the six counts then drew 4 + 2 with an empty cell
+    beside them - which reads as a missing column rather than as a layout.
+  */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+#corrections-panel .corrrows li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--surface);
+}
+
+#corrections-panel .corrrows .k {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+#corrections-panel .corrrows .n {
+  font-family: var(--mono);
+  font-size: var(--t-body);
+  line-height: 1.4;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/*
+  A rejected Override is the one count that must never be inferred from an absence: a dropped
+  Override and a parser that quietly regressed look identical on a board that only counts what
+  it applied. It is given the warning colour and a left rule rather than colour alone.
+*/
+#corrections-panel .corrrej {
+  margin: 0;
+  padding: 9px 0 9px 13px;
+  border-left: 4px solid var(--rule-2);
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+#corrections-panel .corrwhy {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#corrections-panel .corrwhy li {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 9px 12px;
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn);
+}
+
+#corrections-panel .corrwhy .k {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+#corrections-panel .corrwhy .v {
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/*
+  The path copies rather than navigates, on the board's own delegated handler. Styled as a
+  button that reads as a path, because that is what it is: a file-scheme link from a page
+  served over HTTP is a link the browser refuses to follow.
+*/
+#corrections-panel .corrwhy .copy {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border: 1px solid var(--rule-2);
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+#corrections-panel .corrwhy .copy:hover {
+  color: var(--ink);
+  border-color: var(--ink-2);
+}
+
+/*
+  The announcement region. Its height is reserved, so pressing a filter never moves the panel
+  under whoever is reading it - the same rule the board's own two live regions keep.
+*/
+#corrections-panel .corrlive {
+  margin: 0;
+  min-height: 1.7em;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+/* The panel could not be drawn at all. Stated rather than left as a panel that went quiet. */
+#corrections-panel .corrfail {
+  margin: 0;
+  padding: 11px 13px;
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn);
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/*
+  The dense case is the constraint: 36 of 52 corrected has to read as well as 2 of 52.
+  Below the second board fold the breakdown drops to a single column so the counts stay on one
+  line each rather than wrapping under their own labels.
+*/
+@media (max-width: 700px) {
+  #corrections-panel .corrrows {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #corrections-panel .corrwhy li {
+    gap: 4px;
+  }
+}

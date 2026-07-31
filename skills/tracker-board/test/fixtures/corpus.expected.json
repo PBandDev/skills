@@ -1,0 +1,720 @@
+{
+  "schemaVersion": 1,
+  "roots": [
+    {
+      "path": "/corpus",
+      "label": "corpus",
+      "trackerPath": "/corpus/.scratch",
+      "tracker": "local-markdown",
+      "hiddenWorktrees": 0,
+      "features": [
+        {
+          "name": "checkout-flow",
+          "path": "checkout-flow",
+          "specPath": "checkout-flow/spec.md",
+          "mapPath": null,
+          "siblings": [
+            {
+              "label": "spec.md",
+              "path": "checkout-flow/spec.md",
+              "absPath": "/corpus/.scratch/checkout-flow/spec.md"
+            }
+          ],
+          "tickets": [
+            {
+              "id": "7#/corpus#checkout-flow/issues/01-light-theme-default.md",
+              "path": "checkout-flow/issues/01-light-theme-default.md",
+              "absPath": "/corpus/.scratch/checkout-flow/issues/01-light-theme-default.md",
+              "fileName": "01-light-theme-default.md",
+              "contentSha": "92ea6121c1cfd4e12c7c3b539706495a6d53821ef6e56ccb596490a2bfab5f60",
+              "readError": null,
+              "extraction": {
+                "number": 1,
+                "title": "Light theme default",
+                "titleSource": "h1",
+                "criteria": {
+                  "checked": 2,
+                  "total": 2,
+                  "items": [
+                    {
+                      "text": "Light renders as default on first visit",
+                      "checked": true
+                    },
+                    {
+                      "text": "Override persists across reloads",
+                      "checked": true
+                    }
+                  ]
+                },
+                "blockedBy": [],
+                "externalBlocker": null,
+                "rawStatus": "done (pending HITL theme taste check)",
+                "statusPresent": true,
+                "statusPrefix": "done",
+                "qualifier": "(pending HITL theme taste check)",
+                "ticketType": null,
+                "hitl": false,
+                "dialect": "task",
+                "rawFields": [
+                  {
+                    "name": "What to build",
+                    "value": "Ship light as the default theme with a persisted user override."
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "None."
+                  },
+                  {
+                    "name": "Status",
+                    "value": "done (pending HITL theme taste check)"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "complete",
+                "state": "done",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            },
+            {
+              "id": "7#/corpus#checkout-flow/issues/02-prefactor-loader-seams.md",
+              "path": "checkout-flow/issues/02-prefactor-loader-seams.md",
+              "absPath": "/corpus/.scratch/checkout-flow/issues/02-prefactor-loader-seams.md",
+              "fileName": "02-prefactor-loader-seams.md",
+              "contentSha": "c2c42f264886d7780ce94e8b8d136239b747a293fb4ebf0ddbb74ddb857e50c2",
+              "readError": null,
+              "extraction": {
+                "number": 2,
+                "title": "Prefactor the pricing loader seams",
+                "titleSource": "h1",
+                "criteria": {
+                  "checked": 0,
+                  "total": 2,
+                  "items": [
+                    {
+                      "text": "Both loaders reachable through one interface",
+                      "checked": false
+                    },
+                    {
+                      "text": "Existing tests still green with no call-site changes",
+                      "checked": false
+                    }
+                  ]
+                },
+                "blockedBy": [],
+                "externalBlocker": null,
+                "rawStatus": "ready-for-agent",
+                "statusPresent": true,
+                "statusPrefix": "ready-for-agent",
+                "qualifier": "",
+                "ticketType": null,
+                "hitl": false,
+                "dialect": "task",
+                "rawFields": [
+                  {
+                    "name": "What to build",
+                    "value": "Pull the two loaders behind one interface so later tickets have a single"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "none. Do BEFORE 03 (same seams); one implement session may do"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "ready-for-agent"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "agent",
+                "state": "ready",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": true
+              }
+            },
+            {
+              "id": "7#/corpus#checkout-flow/issues/03-sources-panel.md",
+              "path": "checkout-flow/issues/03-sources-panel.md",
+              "absPath": "/corpus/.scratch/checkout-flow/issues/03-sources-panel.md",
+              "fileName": "03-sources-panel.md",
+              "contentSha": "26c4807c7ad75d445c700f204fdbb4410a2aa0583a905db3e701b98f3beec0c7",
+              "readError": null,
+              "extraction": {
+                "number": 3,
+                "title": "Sources panel (manifest-driven credits)",
+                "titleSource": "h1",
+                "criteria": {
+                  "checked": 3,
+                  "total": 3,
+                  "items": [
+                    {
+                      "text": "Panel content derives entirely from fetched manifests",
+                      "checked": true
+                    },
+                    {
+                      "text": "Attribution requirements met for vendor-a derived data",
+                      "checked": true
+                    },
+                    {
+                      "text": "e2e asserts the panel lists exactly the datasets the page loaded",
+                      "checked": true
+                    }
+                  ]
+                },
+                "blockedBy": [
+                  2
+                ],
+                "externalBlocker": null,
+                "rawStatus": "ready-for-human",
+                "statusPresent": true,
+                "statusPrefix": "ready-for-human",
+                "qualifier": "",
+                "ticketType": null,
+                "hitl": false,
+                "dialect": "task",
+                "rawFields": [
+                  {
+                    "name": "What to build",
+                    "value": "A Sources panel on `/pricing` rendered from the manifests of the datasets"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "02 — Prefactor the pricing loader seams."
+                  },
+                  {
+                    "name": "Status",
+                    "value": "ready-for-human"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "needs-you",
+                "state": "done-awaiting-human",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            }
+          ],
+          "counts": {
+            "blocked": 0,
+            "frozen": 0,
+            "agent": 1,
+            "needs-you": 1,
+            "in-progress": 0,
+            "complete": 1,
+            "parked": 0,
+            "unlaned": 0
+          },
+          "frontier": [
+            "7#/corpus#checkout-flow/issues/02-prefactor-loader-seams.md"
+          ],
+          "digest": {
+            "kind": "never-written"
+          },
+          "contentSha": "3aaf4fd1788837a11993f57d41b1df2b4df31b957308d9f10f044784ea2436de",
+          "memberShas": [
+            "checkout-flow/issues/01-light-theme-default.md:92ea6121c1cfd4e12c7c3b539706495a6d53821ef6e56ccb596490a2bfab5f60",
+            "checkout-flow/issues/02-prefactor-loader-seams.md:c2c42f264886d7780ce94e8b8d136239b747a293fb4ebf0ddbb74ddb857e50c2",
+            "checkout-flow/issues/03-sources-panel.md:26c4807c7ad75d445c700f204fdbb4410a2aa0583a905db3e701b98f3beec0c7",
+            "checkout-flow/spec.md:ac408b5a861274c4b1a455be813891dc2b55ca9886523e3dc889d4a4a8ecdce8"
+          ]
+        },
+        {
+          "name": "design-system",
+          "path": "design-system",
+          "specPath": null,
+          "mapPath": null,
+          "siblings": [],
+          "tickets": [
+            {
+              "id": "7#/corpus#design-system/issues/12-widen-threshold-band.md",
+              "path": "design-system/issues/12-widen-threshold-band.md",
+              "absPath": "/corpus/.scratch/design-system/issues/12-widen-threshold-band.md",
+              "fileName": "12-widen-threshold-band.md",
+              "contentSha": "524a3176642ba19761943200fa11dd0ac3068e43ce5449cd34253562737df99d",
+              "readError": null,
+              "extraction": {
+                "number": 12,
+                "title": "Widen the threshold band",
+                "titleSource": "h1",
+                "criteria": {
+                  "checked": 0,
+                  "total": 2,
+                  "items": [
+                    {
+                      "text": "Band configurable per region",
+                      "checked": false
+                    },
+                    {
+                      "text": "Existing global value migrates cleanly",
+                      "checked": false
+                    }
+                  ]
+                },
+                "blockedBy": [],
+                "externalBlocker": null,
+                "rawStatus": "wontfix",
+                "statusPresent": true,
+                "statusPrefix": "wontfix",
+                "qualifier": "",
+                "ticketType": null,
+                "hitl": false,
+                "dialect": "task",
+                "rawFields": [
+                  {
+                    "name": "What to build",
+                    "value": "Allow the band to be configured per region rather than globally."
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "None — can start anytime; blocks nothing in this cycle."
+                  },
+                  {
+                    "name": "Status",
+                    "value": "wontfix"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "parked",
+                "state": "parked",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            }
+          ],
+          "counts": {
+            "blocked": 0,
+            "frozen": 0,
+            "agent": 0,
+            "needs-you": 0,
+            "in-progress": 0,
+            "complete": 0,
+            "parked": 1,
+            "unlaned": 0
+          },
+          "frontier": [],
+          "digest": {
+            "kind": "never-written"
+          },
+          "contentSha": "55a6d088ee5c1a723d6a564a58866ca5fe594d56d1c058d940f678f1ae49d837",
+          "memberShas": [
+            "design-system/issues/12-widen-threshold-band.md:524a3176642ba19761943200fa11dd0ac3068e43ce5449cd34253562737df99d"
+          ]
+        },
+        {
+          "name": "search-ranking",
+          "path": "search-ranking",
+          "specPath": null,
+          "mapPath": "search-ranking/map.md",
+          "siblings": [
+            {
+              "label": "map.md",
+              "path": "search-ranking/map.md",
+              "absPath": "/corpus/.scratch/search-ranking/map.md"
+            }
+          ],
+          "tickets": [
+            {
+              "id": "7#/corpus#search-ranking/issues/02-questions-for-vendor-contact.md",
+              "path": "search-ranking/issues/02-questions-for-vendor-contact.md",
+              "absPath": "/corpus/.scratch/search-ranking/issues/02-questions-for-vendor-contact.md",
+              "fileName": "02-questions-for-vendor-contact.md",
+              "contentSha": "3f1a97f7cc879dd549ad4894831f49adcfd2c2867479b2f8450c4a975274ff5a",
+              "readError": null,
+              "extraction": {
+                "number": 2,
+                "title": "questions for vendor contact",
+                "titleSource": "filename",
+                "criteria": {
+                  "checked": 0,
+                  "total": 0,
+                  "items": []
+                },
+                "blockedBy": [],
+                "externalBlocker": null,
+                "rawStatus": "open",
+                "statusPresent": true,
+                "statusPrefix": "open",
+                "qualifier": "",
+                "ticketType": "task (HITL — the user relays; the vendor contact answers)",
+                "hitl": true,
+                "dialect": "decision",
+                "rawFields": [
+                  {
+                    "name": "Type",
+                    "value": "task (HITL — the user relays; the vendor contact answers)"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "—"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "open"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "needs-you",
+                "state": "ready",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            },
+            {
+              "id": "7#/corpus#search-ranking/issues/03-cutoff-source.md",
+              "path": "search-ranking/issues/03-cutoff-source.md",
+              "absPath": "/corpus/.scratch/search-ranking/issues/03-cutoff-source.md",
+              "fileName": "03-cutoff-source.md",
+              "contentSha": "cb88361442fa2b29cdb4360680d04ec502e54888ae5965cb84a10295c6f91745",
+              "readError": null,
+              "extraction": {
+                "number": 3,
+                "title": "cutoff source",
+                "titleSource": "filename",
+                "criteria": {
+                  "checked": 0,
+                  "total": 0,
+                  "items": []
+                },
+                "blockedBy": [],
+                "externalBlocker": null,
+                "rawStatus": "resolved — 2026-07-24",
+                "statusPresent": true,
+                "statusPrefix": "resolved",
+                "qualifier": "— 2026-07-24",
+                "ticketType": "grilling",
+                "hitl": false,
+                "dialect": "decision",
+                "rawFields": [
+                  {
+                    "name": "Type",
+                    "value": "grilling"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "—"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "resolved — 2026-07-24"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "complete",
+                "state": "done",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            },
+            {
+              "id": "7#/corpus#search-ranking/issues/09-load-current-roster.md",
+              "path": "search-ranking/issues/09-load-current-roster.md",
+              "absPath": "/corpus/.scratch/search-ranking/issues/09-load-current-roster.md",
+              "fileName": "09-load-current-roster.md",
+              "contentSha": "2c5ee9fd58df64d06b6089b10491bceb1641f3851f1b0e5a998a7150b4a724db",
+              "readError": null,
+              "extraction": {
+                "number": 9,
+                "title": "load current roster",
+                "titleSource": "filename",
+                "criteria": {
+                  "checked": 0,
+                  "total": 0,
+                  "items": []
+                },
+                "blockedBy": [
+                  2
+                ],
+                "externalBlocker": null,
+                "rawStatus": "open",
+                "statusPresent": true,
+                "statusPrefix": "open",
+                "qualifier": "",
+                "ticketType": "grilling",
+                "hitl": false,
+                "dialect": "decision",
+                "rawFields": [
+                  {
+                    "name": "Type",
+                    "value": "grilling"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "02"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "open"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "frozen",
+                "state": "frozen",
+                "frozenOn": "7#/corpus#search-ranking/issues/02-questions-for-vendor-contact.md",
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            },
+            {
+              "id": "7#/corpus#search-ranking/issues/10-name-the-launch-date.md",
+              "path": "search-ranking/issues/10-name-the-launch-date.md",
+              "absPath": "/corpus/.scratch/search-ranking/issues/10-name-the-launch-date.md",
+              "fileName": "10-name-the-launch-date.md",
+              "contentSha": "2ab71202bdcdb037a47f2130445a079602735f85ad084dc799efa1e18622b8eb",
+              "readError": null,
+              "extraction": {
+                "number": 10,
+                "title": "name the launch date",
+                "titleSource": "filename",
+                "criteria": {
+                  "checked": 0,
+                  "total": 0,
+                  "items": []
+                },
+                "blockedBy": [],
+                "externalBlocker": null,
+                "rawStatus": "open",
+                "statusPresent": true,
+                "statusPrefix": "open",
+                "qualifier": "",
+                "ticketType": "grilling",
+                "hitl": false,
+                "dialect": "decision",
+                "rawFields": [
+                  {
+                    "name": "Type",
+                    "value": "grilling"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "— (was 02, 03; the vendor contact named the date on 2026-07-24 and dependency 03 is resolved)"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "open"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "agent",
+                "state": "ready",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": true
+              }
+            },
+            {
+              "id": "7#/corpus#search-ranking/issues/11-sources-panel.md",
+              "path": "search-ranking/issues/11-sources-panel.md",
+              "absPath": "/corpus/.scratch/search-ranking/issues/11-sources-panel.md",
+              "fileName": "11-sources-panel.md",
+              "contentSha": "5b9af75b7a53415acd928c18333f4d74ee1aee4dcfa93d7ca94df41d7bd2f6c0",
+              "readError": null,
+              "extraction": {
+                "number": 11,
+                "title": "sources panel",
+                "titleSource": "filename",
+                "criteria": {
+                  "checked": 0,
+                  "total": 0,
+                  "items": []
+                },
+                "blockedBy": [
+                  2,
+                  9
+                ],
+                "externalBlocker": null,
+                "rawStatus": "open",
+                "statusPresent": true,
+                "statusPrefix": "open",
+                "qualifier": "",
+                "ticketType": "grilling",
+                "hitl": false,
+                "dialect": "decision",
+                "rawFields": [
+                  {
+                    "name": "Type",
+                    "value": "grilling"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "02, 09"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "open"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "frozen",
+                "state": "frozen",
+                "frozenOn": "7#/corpus#search-ranking/issues/02-questions-for-vendor-contact.md",
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            },
+            {
+              "id": "7#/corpus#search-ranking/issues/16-regenerate-after-certification.md",
+              "path": "search-ranking/issues/16-regenerate-after-certification.md",
+              "absPath": "/corpus/.scratch/search-ranking/issues/16-regenerate-after-certification.md",
+              "fileName": "16-regenerate-after-certification.md",
+              "contentSha": "5ae0835b687c2ecd134bde345d1e14155032f999966ed1f38c9fa901c52a19bb",
+              "readError": null,
+              "extraction": {
+                "number": 16,
+                "title": "regenerate after certification",
+                "titleSource": "filename",
+                "criteria": {
+                  "checked": 0,
+                  "total": 0,
+                  "items": []
+                },
+                "blockedBy": [
+                  9,
+                  10
+                ],
+                "externalBlocker": null,
+                "rawStatus": "open",
+                "statusPresent": true,
+                "statusPrefix": "open",
+                "qualifier": "",
+                "ticketType": "task",
+                "hitl": false,
+                "dialect": "decision",
+                "rawFields": [
+                  {
+                    "name": "Type",
+                    "value": "task"
+                  },
+                  {
+                    "name": "Blocked by",
+                    "value": "09, 10"
+                  },
+                  {
+                    "name": "Status",
+                    "value": "open"
+                  },
+                  {
+                    "name": "Mixed chain",
+                    "value": "09 traces to a human, but 10 is agent-takeable — so an agent can still make"
+                  }
+                ]
+              },
+              "derivation": {
+                "lane": "blocked",
+                "state": "blocked",
+                "frozenOn": null,
+                "correctedFields": [],
+                "danglingBlockers": [],
+                "onFrontier": false
+              }
+            }
+          ],
+          "counts": {
+            "blocked": 1,
+            "frozen": 2,
+            "agent": 1,
+            "needs-you": 1,
+            "in-progress": 0,
+            "complete": 1,
+            "parked": 0,
+            "unlaned": 0
+          },
+          "frontier": [
+            "7#/corpus#search-ranking/issues/10-name-the-launch-date.md"
+          ],
+          "digest": {
+            "kind": "never-written"
+          },
+          "contentSha": "48c3211d4df2960144897d0cea251bea68e83a272d2867f3f8e56eabdaeb567a",
+          "memberShas": [
+            "search-ranking/issues/02-questions-for-vendor-contact.md:3f1a97f7cc879dd549ad4894831f49adcfd2c2867479b2f8450c4a975274ff5a",
+            "search-ranking/issues/03-cutoff-source.md:cb88361442fa2b29cdb4360680d04ec502e54888ae5965cb84a10295c6f91745",
+            "search-ranking/issues/09-load-current-roster.md:2c5ee9fd58df64d06b6089b10491bceb1641f3851f1b0e5a998a7150b4a724db",
+            "search-ranking/issues/10-name-the-launch-date.md:2ab71202bdcdb037a47f2130445a079602735f85ad084dc799efa1e18622b8eb",
+            "search-ranking/issues/11-sources-panel.md:5b9af75b7a53415acd928c18333f4d74ee1aee4dcfa93d7ca94df41d7bd2f6c0",
+            "search-ranking/issues/16-regenerate-after-certification.md:5ae0835b687c2ecd134bde345d1e14155032f999966ed1f38c9fa901c52a19bb",
+            "search-ranking/map.md:a8523206c2b4bdff68fd41c6d1dd3d0870ddbecd0693da556bfb672695553e60"
+          ]
+        }
+      ],
+      "orphans": [],
+      "adrs": [],
+      "glossary": null,
+      "counts": {
+        "blocked": 1,
+        "frozen": 2,
+        "agent": 2,
+        "needs-you": 2,
+        "in-progress": 0,
+        "complete": 2,
+        "parked": 1,
+        "unlaned": 0
+      },
+      "warnings": []
+    }
+  ],
+  "counts": {
+    "blocked": 1,
+    "frozen": 2,
+    "agent": 2,
+    "needs-you": 2,
+    "in-progress": 0,
+    "complete": 2,
+    "parked": 1,
+    "unlaned": 0
+  },
+  "frontierCount": 2,
+  "progress": {
+    "doneCount": 2,
+    "total": 10,
+    "percent": 20,
+    "label": "finished and off your desk"
+  },
+  "liveness": {
+    "digestsCurrent": 0,
+    "digestsExpired": 0,
+    "digestsNeverWritten": 3,
+    "overridesPendingRecheck": 0
+  },
+  "rejections": [],
+  "overrides": {
+    "applied": 0,
+    "rejected": 0
+  },
+  "corrections": {
+    "total": 0,
+    "byLane": {
+      "blocked": 0,
+      "frozen": 0,
+      "agent": 0,
+      "needs-you": 0,
+      "in-progress": 0,
+      "complete": 0,
+      "parked": 0,
+      "unlaned": 0
+    }
+  },
+  "warnings": []
+}

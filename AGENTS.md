@@ -36,5 +36,20 @@ tmp="$(mktemp -d)" && cd "$tmp" && npx skills add PBandDev/skills --skill <skill
 ## Git Hygiene
 
 - Check `git status --short` before editing and before finishing.
+- `.changeset/` is ignored on purpose; never stage, force-add, or commit its contents.
 - Do not revert unrelated user changes.
 - Commit only the files relevant to the requested change.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as gitignored markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary, recorded as a `Status:` line in each issue file. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

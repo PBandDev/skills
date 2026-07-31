@@ -1,0 +1,532 @@
+/*
+  tracker-board - styles for the per-Feature Digest sheet.
+
+  Every selector below is scoped to `#digest-panel`, which is what keeps this file from reaching
+  the board's own grid or either of the two panels beside it. Media queries are used freely: the
+  scoping is on the selector, not on the context.
+
+  Inherits every token from `board.css`: --ink, --accent, --rule, the state colours, and the type
+  scale (--t-body 16px, --t-sec 14.5px, --t-meta 13px, --t-lab 12px, which is the floor). Nothing
+  is restated here; a second definition is a second thing to keep in step.
+
+  Two rules the board keeps everywhere, and this file with it: no hatched or striped fill - solid
+  low-alpha tint plus a left rule instead - and no remote request of any kind, so no @import, no
+  webfont, and no image reference. The sheet's ground was hatched in an early design and that is
+  exactly what the rule exists to prevent: nothing patterned ever sits under text.
+
+  Colour is never the only channel. The three as-of states differ by glyph, by spelled-out word
+  and by rule style before they differ by hue, and the two tones that mean opposite things - fog
+  and out-of-scope - differ additionally by whether their text is struck through.
+*/
+
+/* ----------------------------------------------------- the Digest counts */
+
+#digest-panel {
+  margin-top: 40px;
+}
+
+/*
+  The standing claim about the board's two liveness tiers lives in the masthead. These counts
+  remain directly above the Digest rows they describe.
+*/
+#digest-panel .dg-head {
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0 12px;
+  margin: 0 0 18px;
+}
+
+#digest-panel .dg-title {
+  margin: 0 0 6px;
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 650;
+}
+
+#digest-panel .dg-liveness {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 96ch;
+}
+
+/*
+  What the panel says when it could not read the frame at all. Drawn like a warning rather than
+  like a Digest, because it is a statement about the board's own reading and not about any
+  Feature - and stated rather than left blank, since a blank panel is what "no Digests exist"
+  looks like.
+*/
+#digest-panel .dg-unreadable {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--warn);
+  background: var(--warn-bg);
+  padding: 14px 16px;
+  margin: 0;
+  font-size: var(--t-sec);
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 92ch;
+}
+
+/* -------------------------------------------------------- refused Digests */
+
+#digest-panel .dg-rejected {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--warn);
+  background: var(--warn-bg);
+  padding: 13px 15px;
+  margin: 0 0 18px;
+  max-width: 96ch;
+}
+
+#digest-panel .dg-rejlead {
+  margin: 0 0 8px;
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+#digest-panel .dg-rejlist {
+  margin: 0;
+  padding-left: 20px;
+  list-style: square;
+}
+
+#digest-panel .dg-rej {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.7;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+#digest-panel .dg-rejwhere {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+/* ------------------------------------------------------- the Feature rows */
+
+#digest-panel .dg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/*
+  Full width by design. A five-Block Digest is roughly 1100px tall at 16px against a 254px card
+  tile, so it cannot live in a card, and narrowing it here would only put the height back.
+*/
+#digest-panel .dg-item {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--rule-2);
+  background: var(--surface);
+}
+
+/*
+  The three as-of states, on three channels each. The rule style carries as much as the hue:
+  solid where a Digest holds, solid warn where one has come loose, dashed where none was ever
+  written and there is nothing to come loose.
+*/
+#digest-panel .dg-item[data-as-of="current"] {
+  border-left-color: var(--s-done);
+}
+
+#digest-panel .dg-item[data-as-of="expired"] {
+  border-left-color: var(--warn);
+  background: var(--warn-bg);
+}
+
+#digest-panel .dg-item[data-as-of="never-written"] {
+  border-left-style: dashed;
+  border-left-color: var(--rule-2);
+  background: transparent;
+}
+
+/*
+  The fourth state: the frame claimed something it cannot support. Not a Digest state at all, so
+  it takes the board's warning treatment rather than any of the three as-of colours - a reader
+  must not be able to mistake it for "expired", which is a real and ordinary thing to be.
+*/
+#digest-panel .dg-item[data-as-of="unreadable"] {
+  border-left-style: double;
+  border-left-color: var(--warn);
+  background: var(--warn-bg);
+}
+
+#digest-panel .dg-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px 12px;
+  flex-wrap: wrap;
+  padding: 13px 15px;
+  margin: 0;
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* A disclosure only exists where there is a Digest to disclose, so only it takes a pointer. */
+#digest-panel summary.dg-line {
+  cursor: pointer;
+}
+
+#digest-panel summary.dg-line:hover {
+  background: var(--accent-tint);
+}
+
+#digest-panel .dg-glyph {
+  font-size: var(--t-body);
+  line-height: 1.2;
+  color: var(--ink-3);
+}
+
+#digest-panel .dg-item[data-as-of="current"] .dg-glyph {
+  color: var(--s-done);
+}
+
+#digest-panel .dg-item[data-as-of="expired"] .dg-glyph,
+#digest-panel .dg-item[data-as-of="unreadable"] .dg-glyph {
+  color: var(--warn);
+}
+
+#digest-panel .dg-name {
+  font-size: var(--t-body);
+  line-height: 1.5;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+#digest-panel .dg-root {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+#digest-panel .dg-asof {
+  flex: 1 1 30ch;
+  min-width: 0;
+}
+
+#digest-panel .dg-item[data-as-of="expired"] .dg-asof,
+#digest-panel .dg-item[data-as-of="unreadable"] .dg-asof {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+/* The key the whole as-of comparison turns on, shown as the fact it is. */
+#digest-panel .dg-sha {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- the sheet */
+
+#digest-panel .dg-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 4px 15px 20px;
+  border-top: 1px solid var(--rule);
+  margin: 0 0 0 -1px;
+}
+
+#digest-panel .dg-block {
+  margin: 0;
+}
+
+#digest-panel .dg-summary {
+  font-size: var(--t-body);
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 88ch;
+  padding-top: 14px;
+}
+
+/* -------------------------------------------------------------- facts */
+
+#digest-panel .dg-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+#digest-panel .dg-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--rule-2);
+  background: var(--surface-2);
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+#digest-panel .dg-flabel {
+  overflow-wrap: anywhere;
+}
+
+#digest-panel .dg-fvalue {
+  font-family: var(--mono);
+  font-size: var(--t-sec);
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* Spelled out, always, beside its tint. The five states never ride on colour. */
+#digest-panel .dg-fstate {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+#digest-panel .dg-fact[data-state="done"] {
+  border-left-color: var(--s-done);
+}
+
+#digest-panel .dg-fact[data-state="done"] .dg-fstate {
+  color: var(--s-done);
+}
+
+#digest-panel .dg-fact[data-state="active"] {
+  border-left-color: var(--s-progress);
+}
+
+#digest-panel .dg-fact[data-state="active"] .dg-fstate {
+  color: var(--s-progress);
+}
+
+#digest-panel .dg-fact[data-state="blocked"] {
+  border-left-color: var(--s-blocked);
+}
+
+#digest-panel .dg-fact[data-state="blocked"] .dg-fstate {
+  color: var(--s-blocked);
+}
+
+#digest-panel .dg-fact[data-state="planned"] {
+  border-left-color: var(--s-you);
+}
+
+#digest-panel .dg-fact[data-state="planned"] .dg-fstate {
+  color: var(--s-you);
+}
+
+#digest-panel .dg-fact[data-state="dropped"] {
+  border-left-style: dashed;
+  border-left-color: var(--s-parked);
+}
+
+#digest-panel .dg-fact[data-state="dropped"] .dg-fstate {
+  color: var(--s-parked);
+}
+
+/* ------------------------------------------------------------ bullets */
+
+#digest-panel .dg-bullets {
+  border-left: 4px solid var(--rule-2);
+  padding-left: 14px;
+  max-width: 92ch;
+}
+
+#digest-panel .dg-bhead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 6px;
+}
+
+#digest-panel .dg-tglyph {
+  font-size: var(--t-sec);
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+#digest-panel .dg-btitle {
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+#digest-panel .dg-blist {
+  margin: 0;
+  padding-left: 20px;
+  list-style: square;
+}
+
+#digest-panel .dg-bitem {
+  font-size: var(--t-sec);
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+/*
+  The five ordinary tones. Each takes its own hue on the rule and on the glyph, and each carries
+  its spelled-out name in the head, so the hue is the third channel rather than the only one.
+*/
+#digest-panel .dg-bullets[data-tone="note"] {
+  border-left-color: var(--rule-2);
+}
+
+#digest-panel .dg-bullets[data-tone="note"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="note"] .dg-tone {
+  color: var(--ink-3);
+}
+
+#digest-panel .dg-bullets[data-tone="risk"] {
+  border-left-color: var(--s-blocked);
+}
+
+#digest-panel .dg-bullets[data-tone="risk"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="risk"] .dg-tone {
+  color: var(--s-blocked);
+}
+
+#digest-panel .dg-bullets[data-tone="decision"] {
+  border-left-color: var(--s-done);
+}
+
+#digest-panel .dg-bullets[data-tone="decision"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="decision"] .dg-tone {
+  color: var(--s-done);
+}
+
+#digest-panel .dg-bullets[data-tone="question"] {
+  border-left-color: var(--s-progress);
+}
+
+#digest-panel .dg-bullets[data-tone="question"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="question"] .dg-tone {
+  color: var(--s-progress);
+}
+
+#digest-panel .dg-bullets[data-tone="correction"] {
+  border-left-color: var(--accent);
+}
+
+#digest-panel .dg-bullets[data-tone="correction"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="correction"] .dg-tone {
+  color: var(--accent);
+}
+
+/*
+  fog versus out-of-scope. They mean OPPOSITE things - not-yet-specified against ruled-out - and
+  this is the one artifact where that distinction is the deliverable, so it is carried on four
+  channels that need no label read:
+
+    glyph       a hollow dotted ring            a solid cross
+    rule        dashed, so the edge is open     solid, so the edge is closed
+    text        ordinary                        struck through
+    hue         violet, the board's "a person   parked grey, the board's "not being
+                has to decide" family           worked on" family
+
+  The struck-through text is the strongest of the four and the reason the pair cannot be read
+  backwards: ruled-out prose looks ruled out from across the room, and not-yet-specified prose
+  does not. It is text-decoration only - no reduced opacity - because a ruled-out item still has
+  to be legible enough to argue with.
+*/
+#digest-panel .dg-bullets[data-tone="fog"] {
+  border-left-style: dashed;
+  border-left-color: var(--s-you);
+}
+
+#digest-panel .dg-bullets[data-tone="fog"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="fog"] .dg-tone {
+  color: var(--s-you);
+}
+
+#digest-panel .dg-bullets[data-tone="fog"] .dg-blist {
+  list-style: circle;
+}
+
+#digest-panel .dg-bullets[data-tone="out-of-scope"] {
+  border-left-style: solid;
+  border-left-color: var(--s-parked);
+}
+
+#digest-panel .dg-bullets[data-tone="out-of-scope"] .dg-tglyph,
+#digest-panel .dg-bullets[data-tone="out-of-scope"] .dg-tone {
+  color: var(--s-parked);
+}
+
+#digest-panel .dg-bullets[data-tone="out-of-scope"] .dg-bitem {
+  text-decoration-line: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* -------------------------------------------------------------- links */
+
+#digest-panel .dg-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#digest-panel .dg-link {
+  display: flex;
+  align-items: baseline;
+  gap: 6px 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/*
+  A fixed label column, so several paths line up rather than each one starting wherever its own
+  label happened to end. Sized to the 40-character label cap being unusual rather than to it
+  being typical: a label longer than the column pushes its own path along and nothing else moves.
+*/
+#digest-panel .dg-llabel {
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink);
+  flex: 0 0 18ch;
+  max-width: 100%;
+}
+
+#digest-panel .dg-lpath {
+  min-width: 0;
+  flex: 1 1 40ch;
+}
+
+/* ---------------------------------------------------------- responsive
+   The panel folds its own internal grid and nothing else. The board's column count is decided
+   by four declarations in board.css and by nothing here.
+*/
+
+@media (max-width: 1179px) {
+  #digest-panel .dg-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  #digest-panel .dg-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #digest-panel .dg-sha {
+    margin-left: 0;
+  }
+
+  #digest-panel .dg-llabel {
+    flex: 1 1 100%;
+  }
+}

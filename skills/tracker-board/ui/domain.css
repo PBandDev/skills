@@ -1,0 +1,361 @@
+/*
+  tracker-board - styles for the repo-wide domain-model panel.
+
+  Inherits every token from `board.css`: --ink, --accent, --rule, the state colours, and the
+  type scale (--t-body 16px, --t-sec 14.5px, --t-meta 13px, --t-lab 12px, which is the floor).
+  Nothing is restated here; a second definition is a second thing to keep in step.
+
+  Two rules the board keeps everywhere, and this file with it: no hatched or striped fill -
+  solid low-alpha tint plus a left rule instead - and no remote request of any kind, so no
+  import, no webfont, and no embedded or remote image reference of any kind.
+
+  EVERY SELECTOR IS SCOPED TO `#domain-panel`. Three panels write into one document, and the
+  board's layout rigidity rests on exactly four declarations being able to set its column
+  count. A bare `main`, `#board` or `*` rule reaches the board without ever naming `.board`,
+  and an unscoped rule of this panel's restyles the two panels beside it. Scoping closes both
+  at once. Any document-global name declared by an at-rule would escape that entirely, so
+  there are none here.
+
+  THE SCROLL BOX IS THE SCALE ARGUMENT. `.dom-list` caps its height and scrolls. That is the
+  property that rules out an ADR column: a column grows with the corpus - roughly 2,239px at
+  ten records and 5,808px at forty, against a 695px board - while this panel is the same
+  height at forty as it is at four.
+*/
+
+#domain-panel .subnote,
+#domain-panel .sectnote {
+  max-width: 96ch;
+}
+
+#domain-panel .sectnote {
+  color: var(--ink-2);
+}
+
+#domain-panel .dom-root {
+  margin-top: 22px;
+}
+
+#domain-panel .dom-rootname {
+  margin: 0 0 12px;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/*
+  The ledger and the pointer, side by side. The pointer is deliberately the narrower of the
+  two and deliberately second: it is one line of counts and a way out to a file, and giving it
+  equal weight would be the ubiquitous language competing with the board again by another
+  route.
+*/
+#domain-panel .dom-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+#domain-panel .dom-h3 {
+  margin: 0 0 9px;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  font-weight: 650;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------------------------------------------------- the ADR ledger */
+
+#domain-panel .dom-list {
+  /*
+    The fixed box. `max-height` rather than `height` so four records do not sit in a tall
+    empty frame - the claim being made is that forty records do not stretch the board, and
+    this is what holds it.
+  */
+  max-height: 336px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+#domain-panel .dom-list:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#domain-panel .dom-adr {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr);
+  column-gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+#domain-panel .dom-adr:last-child {
+  border-bottom: 0;
+}
+
+/*
+  A real grid item in the second column, not `display: contents`. Contents flattens the line
+  into the row's own grid, so a third child - the `no H1` label - lands in the next implicit
+  row under the number gutter instead of beside the title. Seen in a browser, at forty.
+*/
+#domain-panel .dom-line {
+  grid-column: 2;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+}
+
+/*
+  A gutter, not a second title. This repository's ADRs open their H1 with the same number, so
+  the two read together as an index down the left edge rather than as the number said twice.
+*/
+#domain-panel .dom-num {
+  grid-column: 1;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink-3);
+}
+
+#domain-panel .dom-title {
+  font-size: var(--t-sec);
+  line-height: 1.55;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* A file name standing in for a title is drawn as the file name it is. */
+#domain-panel .dom-title[data-source] {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  color: var(--ink-2);
+}
+
+#domain-panel .dom-lab {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/*
+  The amendment mark. Solid low-alpha tint and a left rule - never a hatch - and the label
+  beside it says `heading`, because this is the text of a heading and not a state the record
+  is in. There is no status colour here for the same reason: an ADR has no status.
+*/
+#domain-panel .dom-amend {
+  grid-column: 2;
+  margin: 6px 0 0;
+  padding: 5px 9px;
+  border-left: 4px solid var(--rule-2);
+  background: var(--surface-2);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+}
+
+/*
+  The label sits before the quotation here and after the title elsewhere, so it takes its
+  spacing from the side it is actually on. Without this the mark reads `HEADING"Amendment ...`
+  with the two run together, which is what it did in a browser.
+*/
+#domain-panel .dom-amend .dom-lab {
+  margin: 0 8px 0 0;
+}
+
+#domain-panel .dom-quote {
+  font-family: var(--mono);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/*
+  The panel saying it could not draw itself. Deliberately loud, and deliberately NOT an empty
+  mount: an empty mount already means "this repository keeps no ADRs and has no glossary", so a
+  failure that rendered nothing would be making that claim about a repository it knows nothing
+  about. Same warn treatment as an unreadable file, because it is the same kind of fact.
+*/
+#domain-panel .dom-failed {
+  margin: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--warn);
+  border-left: 4px solid var(--warn);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: var(--t-sec);
+  line-height: 1.65;
+  max-width: 96ch;
+  overflow-wrap: anywhere;
+}
+
+#domain-panel .dom-err {
+  grid-column: 2;
+  margin: 6px 0 0;
+  padding: 5px 9px;
+  border-left: 4px solid var(--warn);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+#domain-panel .dom-path {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 4px;
+}
+
+/* ---------------------------------------------------- the glossary pointer */
+
+#domain-panel .dom-gloss {
+  padding: 13px 14px;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+#domain-panel .dom-counts {
+  margin: 0 0 8px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 7px;
+}
+
+#domain-panel .dom-big {
+  font-family: var(--mono);
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+#domain-panel .dom-unit {
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin-right: 6px;
+}
+
+#domain-panel .dom-gloss .dom-path {
+  display: block;
+  margin: 0 0 9px;
+}
+
+#domain-panel .dom-open {
+  font: inherit;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--rule-2);
+  padding: 5px 11px;
+  cursor: pointer;
+}
+
+#domain-panel .dom-open:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+#domain-panel .dom-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------- the dialog */
+
+#domain-panel .dom-dialog {
+  max-width: 62ch;
+  border: 1px solid var(--rule-2);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+
+#domain-panel .dom-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+#domain-panel .dom-dialog-h {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-weight: 650;
+}
+
+#domain-panel .dom-dialog-p {
+  margin: 0 0 12px;
+  font-size: var(--t-sec);
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+#domain-panel .dom-dialog-form {
+  margin: 14px 0 0;
+}
+
+#domain-panel .dom-close {
+  font: inherit;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--rule-2);
+  padding: 5px 13px;
+  cursor: pointer;
+}
+
+#domain-panel .dom-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------- narrow viewports */
+
+/*
+  The panel folds on its own, which the scope rule deliberately leaves open: scoping is on the
+  selector and not on the context. The board's own folds are untouched by any of this.
+*/
+@media (max-width: 1179px) {
+  #domain-panel .dom-cols {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  #domain-panel .dom-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #domain-panel .dom-adr {
+    grid-template-columns: 3ch minmax(0, 1fr);
+    column-gap: 9px;
+  }
+}

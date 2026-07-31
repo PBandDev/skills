@@ -1,0 +1,1279 @@
+/*
+  tracker-board - the board.
+
+  The visual language is inherited, not invented: warm paper, hairline rules, boxy frames,
+  mono metadata, per-Feature accent colours, and paths that copy rather than link. Four rules
+  carried from the design reference, each of which cost something:
+
+    1. TYPE SCALE FROM THE OUTSET. Body 16px, secondary 14.5px, mono metadata 13px, and a hard
+       12px floor for tracked micro-labels only - with line-height, padding and gaps scaled to
+       match rather than left tight under bigger glyphs. The earlier ~12.5px body was measured
+       as too small to read, and a type scale is not something to fix later.
+    2. NO HATCHING. Not one repeating gradient, not one patterned fill, anywhere on this page.
+       Where state needs to read, it reads as a solid low-alpha tint plus a left rule. Nothing
+       patterned ever sits under text, because text is what the board is for.
+    3. PATHS COPY, NEVER LINK. A file-scheme href from a page served over HTTP is dead in a
+       browser, so every path is a real button that writes to the clipboard and confirms into
+       a line whose height is reserved up front - a confirmation never shifts the layout.
+    4. NOTHING RIDES ON COLOUR ALONE. Frozen and Needs-you are adjacent violets by design -
+       the cause of both is a person - with the deeper shade for frozen, because a frozen
+       Ticket is not yours to do, only yours to unblock. That closeness is acceptable only
+       because neither is carried by hue: each Lane has its own glyph, its own spelled-out
+       name on every card, and its own border treatment.
+
+  The layout is RIGID. Six columns in a fixed order with fixed glyphs, and content never
+  rearranges them: a status board's value is a visual language you learn once. Columns fold
+  6 -> 3 -> 2 -> 1 as the viewport narrows, and never reflow because of what is in them.
+
+  No webfont, no CDN, no remote image, no request of any kind. The board runs offline from a
+  fresh clone, which is a hard constraint rather than an aspiration.
+*/
+
+:root {
+  color-scheme: light;
+
+  --paper: #f6f2ea;
+  --surface: #fffdf8;
+  --surface-2: #efeadf;
+  --ink: #1b1a15;
+  --ink-2: #54514a;
+  --ink-3: #6b675e;
+  --rule: #ded7c9;
+  --rule-2: #c9c1b0;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+
+  --accent: #9d5904;
+  --accent-bg: #fbeed6;
+  --accent-tint: rgba(157, 89, 4, 0.07);
+
+  /*
+    The seven Lane colours. Frozen and Needs-you are the same family on purpose - both are
+    caused by a person - and frozen takes the deeper shade. Read the header note above for
+    why that is safe here and would not be on a board that leant on hue.
+  */
+  --s-blocked: #9d3018;  --s-blocked-bg: #fae7e0;
+  --s-agent: #845000;    --s-agent-bg: #faefd6;
+  --s-you: #66418c;      --s-you-bg: #efe7fa;
+  --s-frozen: #553372;   --s-frozen-bg: #ece4f5;
+  --s-progress: #14587f; --s-progress-bg: #e0eff8;
+  --s-done: #3b6647;     --s-done-bg: #e5eee5;
+  --s-parked: #6b675e;   --s-parked-bg: #e8e4da;
+
+  --warn: #9d3018;
+  --warn-bg: #fae7e0;
+  --ok: #3b6647;
+
+  --f1: #0d6b66; --f2: #9e356d; --f3: #3a49a1;
+  --f4: #586619; --f5: #9a4e17; --f6: #1a5896;
+
+  --sans: ui-sans-serif, system-ui, "Segoe UI", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "Cascadia Code", "SFMono-Regular", "Segoe UI Mono",
+    Consolas, "Liberation Mono", monospace;
+
+  --t-body: 16px;
+  --t-sec: 14.5px;
+  --t-meta: 13px;
+  --t-lab: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #0d1013;
+    --surface: #151920;
+    --surface-2: #1c2129;
+    --ink: #eae7e0;
+    --ink-2: #b2aea5;
+    --ink-3: #8f8b82;
+    --rule: #262c35;
+    --rule-2: #3a424e;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+
+    --accent: #eaa844;
+    --accent-bg: #3a2c12;
+    --accent-tint: rgba(234, 168, 68, 0.1);
+
+    --s-blocked: #f18a6c;  --s-blocked-bg: #3a1f18;
+    --s-agent: #f0b950;    --s-agent-bg: #382b12;
+    --s-you: #bd9ce8;      --s-you-bg: #282040;
+    --s-frozen: #d9b8ff;   --s-frozen-bg: #231a33;
+    --s-progress: #6fbef2; --s-progress-bg: #102e3e;
+    --s-done: #8fc09c;     --s-done-bg: #192a20;
+    --s-parked: #8f8b82;   --s-parked-bg: #22262c;
+
+    --warn: #f18a6c;
+    --warn-bg: #3a1f18;
+    --ok: #8fc09c;
+
+    --f1: #4ecac1; --f2: #ee7fb0; --f3: #909cf2;
+    --f4: #adc253; --f5: #ea9d5f; --f6: #66b3f0;
+  }
+}
+
+* { box-sizing: border-box; }
+
+/*
+  `hidden` has to win, and this is the one place a bang-important belongs.
+
+  A card carries every optional block at all times - the meter, the decision pills, the raw
+  fields, the frozen chain, the blocker list - and toggles `hidden` rather than adding and
+  removing nodes, because a card that is rebuilt cannot keep focus and cannot be the target of
+  the blocker navigation. But the browser's own `[hidden]` rule is a bare attribute selector,
+  so any component rule that sets `display` outranks it. Every block below sets `display`.
+
+  Without this line the board draws an empty "unclassified" panel and an empty "frozen on you"
+  panel on every card on the page. That is not a cosmetic bug: it tells the reader that a task
+  Ticket scored as neither Dialect and that its chain ends at a person, both false, on cards
+  where both are false. Observed in a real browser, which is the only place it shows up.
+*/
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  padding: 0 26px 72px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+.n { font-variant-numeric: tabular-nums; }
+
+.lab {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.5;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- masthead */
+
+.masthead {
+  padding: 22px 0 16px;
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 0;
+}
+
+.mast {
+  display: flex;
+  align-items: baseline;
+  gap: 12px 26px;
+  flex-wrap: wrap;
+}
+
+.mast-id { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; min-width: 0; }
+
+.masthead h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 680;
+}
+
+.summary { font-size: var(--t-sec); line-height: 1.6; color: var(--ink-2); }
+
+.masthead .tiers {
+  margin: 12px 0 0;
+  max-width: 96ch;
+  font-size: var(--t-sec);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/*
+  The connection state. It reserves its own height so that going from live to reconnecting
+  never moves the board underneath it - the same reason the copy confirmation does.
+*/
+.conn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 1.7em;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.7;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.conn .dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border: 1px solid currentColor;
+  background: currentColor;
+}
+
+.conn[data-state="live"] { color: var(--ok); }
+.conn[data-state="retrying"] { color: var(--accent); }
+.conn[data-state="down"] { color: var(--warn); }
+.conn[data-state="retrying"] .dot { background: transparent; }
+
+.totals { display: flex; align-items: flex-end; flex-wrap: wrap; margin-top: 18px; }
+
+.tot {
+  padding: 0 20px;
+  border-left: 1px solid var(--rule-2);
+  text-align: right;
+  margin-bottom: 6px;
+}
+
+.tot:first-child { border-left: 0; padding-left: 0; }
+
+.tot b {
+  display: block;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+
+.tot.hi b { color: var(--accent); }
+
+.tot .lab {
+  display: block;
+  margin-top: 8px;
+  max-width: 15ch;
+  margin-left: auto;
+}
+
+/* the counts, in a sentence - deliberately not a second chart */
+.headline {
+  margin: 0;
+  padding: 18px 0 22px;
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--t-sec);
+  line-height: 1.72;
+  color: var(--ink-2);
+  max-width: 106ch;
+}
+
+.headline b { color: var(--ink); font-weight: 600; }
+
+.headline .cnt {
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- notices */
+
+.notices { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+
+/* Solid tint plus a left rule. No hatch, and nothing patterned under the words. */
+.notice {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--warn);
+  background: var(--warn-bg);
+  color: var(--ink);
+  padding: 12px 15px;
+  font-size: var(--t-sec);
+  line-height: 1.6;
+}
+
+.notice .kind {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warn);
+  font-weight: 650;
+  margin-bottom: 3px;
+}
+
+/* ---------------------------------------------------------------- controls */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  padding: 14px 0;
+  margin-top: 16px;
+  border-top: 1px solid var(--ink);
+}
+
+.seg { display: inline-flex; border: 1px solid var(--rule-2); background: var(--surface); }
+
+.chip {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+  padding: 7px 14px;
+  border: 0;
+  border-left: 1px solid var(--rule-2);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.chip:first-child { border-left: 0; }
+.chip:hover { color: var(--ink); background: var(--surface-2); }
+
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+/* the status line reserves its height, so announcing never moves the board */
+.live {
+  margin: 0 0 0 auto;
+  min-height: 1.7em;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  max-width: 56ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------- the board */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.col { background: var(--paper); display: flex; flex-direction: column; min-width: 0; }
+
+.col-head {
+  padding: 15px 13px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.col-head .hrow { display: flex; align-items: baseline; gap: 9px; }
+
+.col-head h3 {
+  margin: 0;
+  font-size: var(--t-meta);
+  line-height: 1.5;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.col-head .ccount {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  font-weight: 600;
+}
+
+.col-head .chint {
+  margin: 10px 0 0;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.col-head .chint b { color: var(--ink-2); font-weight: 650; }
+
+.col-head .cbreak {
+  margin: 9px 0 0;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+
+.col-head .cbreak .cnt { color: var(--ink); font-weight: 700; }
+
+/* the column's own colour lives on its top rule, its glyph and its count - never alone */
+.col[data-col="blocked"] .col-head { border-top: 3px solid var(--s-blocked); }
+.col[data-col="agent"] .col-head { border-top: 3px solid var(--s-agent); }
+.col[data-col="needs-you"] .col-head { border-top: 3px solid var(--s-you); }
+.col[data-col="in-progress"] .col-head { border-top: 3px solid var(--s-progress); }
+.col[data-col="done"] .col-head { border-top: 3px solid var(--s-done); }
+.col[data-col="parked"] .col-head { border-top: 3px solid var(--s-parked); }
+
+.col[data-col="blocked"] .cglyph, .col[data-col="blocked"] .ccount { color: var(--s-blocked); }
+.col[data-col="agent"] .cglyph, .col[data-col="agent"] .ccount { color: var(--s-agent); }
+.col[data-col="needs-you"] .cglyph, .col[data-col="needs-you"] .ccount { color: var(--s-you); }
+.col[data-col="in-progress"] .cglyph, .col[data-col="in-progress"] .ccount { color: var(--s-progress); }
+.col[data-col="done"] .cglyph, .col[data-col="done"] .ccount { color: var(--s-done); }
+.col[data-col="parked"] .cglyph, .col[data-col="parked"] .ccount { color: var(--s-parked); }
+
+.col-body { padding: 12px 10px 26px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+.colempty {
+  border: 1px dashed var(--rule-2);
+  padding: 16px 15px;
+  color: var(--ink-2);
+  font-size: var(--t-sec);
+  line-height: 1.6;
+}
+
+.colempty .zero {
+  display: block;
+  font-family: var(--mono);
+  font-size: 32px;
+  line-height: 1.05;
+  color: var(--rule-2);
+  margin-bottom: 10px;
+}
+
+.colempty b {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+
+.colnote {
+  margin: 12px 0 0;
+  font-size: var(--t-meta);
+  line-height: 1.65;
+  color: var(--ink-2);
+  border-top: 1px dotted var(--rule-2);
+  padding-top: 11px;
+}
+
+/* ------------------------------------------------------------- sub-lanes */
+
+.lane { display: flex; flex-direction: column; gap: 10px; }
+
+.sublane {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.sublane .rule { flex: 1; height: 1px; background: currentColor; opacity: 0.35; }
+.sublane[data-l="frozen"] { color: var(--s-frozen); }
+.sublane[data-l="blocked"] { color: var(--s-blocked); }
+
+.sublane-note {
+  margin: -4px 0 0;
+  font-size: var(--t-lab);
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+/* A labelled sub-lane at zero draws, for the same reason an empty column draws: the split
+   between "frozen on you" and "queued for an agent" is the point of this column, and a reader
+   who only ever meets the populated half never learns there were two. The dashed box is the
+   column-level empty state at sub-lane scale - deliberately the same vocabulary, so a zero here
+   is read as drawn on purpose rather than as a heading whose body failed to render. */
+
+.laneempty {
+  margin: 0;
+  border: 1px dashed var(--rule-2);
+  padding: 10px 13px;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* The count keeps its Lane colour and its full contrast: it is the number the reader came for,
+   and dimming it would make "none frozen on you" the quietest thing on the board. Only the
+   flexible rule between label and count softens, which carries no meaning on its own. */
+.lane[data-empty] .sublane .rule { opacity: 0.2; }
+
+.lanecards { display: flex; flex-direction: column; gap: 10px; }
+
+/* --------------------------------------------------- Feature group divider */
+
+.grpblock { display: flex; flex-direction: column; gap: 9px; --fh: var(--f1); }
+
+.grpblock[data-accent="2"] { --fh: var(--f2); }
+.grpblock[data-accent="3"] { --fh: var(--f3); }
+.grpblock[data-accent="4"] { --fh: var(--f4); }
+.grpblock[data-accent="5"] { --fh: var(--f5); }
+.grpblock[data-accent="6"] { --fh: var(--f6); }
+
+.grp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  min-width: 0;
+}
+
+.grp .rule { flex: 1; height: 1px; background: var(--rule); }
+.grp .gname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.grp .gcount { flex: none; }
+
+.sigil {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--fh, var(--ink-3));
+  border: 1px solid var(--fh, var(--rule-2));
+  padding: 1px 5px 0;
+  flex: none;
+}
+
+.cards { display: flex; flex-direction: column; gap: 10px; }
+
+/* ---------------------------------------------------------------- the card */
+
+.card {
+  --fh: var(--f1);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--fh);
+  box-shadow: var(--shadow);
+  padding: 11px 13px 12px 12px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.card[data-accent="2"] { --fh: var(--f2); }
+.card[data-accent="3"] { --fh: var(--f3); }
+.card[data-accent="4"] { --fh: var(--f4); }
+.card[data-accent="5"] { --fh: var(--f5); }
+.card[data-accent="6"] { --fh: var(--f6); }
+
+/* a link file or an unplaced Ticket is carried, not placed - and says so at its edge */
+.card[data-kind="sibling"], .card[data-kind="orphan"] { border-left-style: dotted; }
+
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/*
+  Where the blocker navigation just landed. It fades rather than persisting: the mark answers
+  "which card did I just move to", and a mark that stayed would accumulate into noise.
+*/
+.card[data-targeted] { border-color: var(--accent); background: var(--accent-bg); }
+
+/*
+  A card that just changed gets a brief tint. It is the only motion on the page, and it earns
+  its place: the whole claim of this board is that a card moves when a file moves, and without
+  a mark the update is invisible unless you happened to be looking at that card.
+*/
+@keyframes settle {
+  from { background: var(--accent-bg); border-color: var(--accent); }
+  to { background: var(--surface); border-color: var(--rule); }
+}
+
+.card[data-changed="1"] { animation: settle 1.6s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card[data-changed="1"] { animation: none; background: var(--accent-bg); }
+}
+
+.card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.tid {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.55;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--fh);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+/* An AI-corrected Extraction marks the ticket id the card already has, rather than adding an
+   element to the card: N corrections then cost the same ink as one, which is the whole point of
+   the treatment and the reason it still reads at 36 corrections out of 52 rather than only at 2.
+   It decorates, so it adds no layout and cannot move anything.
+
+   The rule lives here, in the board's own stylesheet, and not in `corrections.css`, because
+   `.tid` is the board's element. A panel stylesheet is scoped to its own mount by an asserted
+   guard, so no panel can paint outside itself - which is what stops three panels written
+   concurrently from restyling the board and each other. That leaves a division worth stating,
+   because the next panel that wants to mark a board element will meet it too:
+
+     the panel sets the state, and the stylesheet that owns the element paints it.
+
+   So `corrections.js` sets `data-corrected` on a `.tid` it does not own, and this rule is the
+   only thing that draws. Deleting it does not fail a render - it silently stops the marker
+   painting while the attribute goes on being set, so it is asserted rather than left to survive
+   on being noticed.
+
+   Both selectors are here in one rule, and they have to stay in one rule. A Ticket prints its id
+   in two elements, not one: `.tid` on the `article[data-card]` in a column, and `.lid` on the
+   `div[data-ledger]` row inside an opened Feature in the collapsed Done column. Both are filled
+   from the same `card.shortId` (`render.js` 796 and 520). Marking only one means the same Ticket
+   reads corrected in one mode of the Done column and uncorrected in the other; splitting them
+   into two rules means a later edit can drift one without the other. One block cannot drift.
+
+   Note for anyone editing `.lrow .lid` at the foot of this file: `.lid[data-corrected]` and
+   `.lrow .lid` have the same specificity (0,2,0), and `.lrow .lid` comes later, so it wins on any
+   property both rules set. They share none, so the underline lands; computed-style coverage
+   verifies that result. Adding `text-decoration` there would unpaint this marker on ledger rows
+   while source-only assertions stayed green. */
+.tid[data-corrected], .lid[data-corrected] {
+  text-decoration: underline dotted var(--accent);
+  text-underline-offset: 3px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.45;
+  letter-spacing: -0.004em;
+  font-weight: 500;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* ----- the Lane tag: glyph AND word, on every card, in every Lane ----- */
+
+.stag {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px 1px;
+  border: 1px solid var(--rule-2);
+  color: var(--ink-2);
+  background: var(--surface-2);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+}
+
+.stag[data-l="blocked"] { color: var(--s-blocked); background: var(--s-blocked-bg); border-color: var(--s-blocked); }
+.stag[data-l="agent"] { color: var(--s-agent); background: var(--s-agent-bg); border-color: var(--s-agent); }
+.stag[data-l="needs-you"] { color: var(--s-you); background: var(--s-you-bg); border-color: var(--s-you); }
+.stag[data-l="in-progress"] { color: var(--s-progress); background: var(--s-progress-bg); border-color: var(--s-progress); }
+.stag[data-l="complete"] { color: var(--s-done); background: var(--s-done-bg); border-color: var(--s-done); }
+.stag[data-l="parked"] { color: var(--ink-2); background: var(--s-parked-bg); border-color: var(--rule-2); border-style: dashed; }
+
+/*
+  Frozen takes a third border style in the same family as Needs-you: solid where a person is
+  declared, dashed where a person is inferred, double where a person stands at the end of every
+  path out. The two violets are adjacent on purpose; the border, the glyph and the word are
+  what carry the difference.
+*/
+.stag[data-l="frozen"] {
+  color: var(--s-frozen);
+  background: var(--s-frozen-bg);
+  border: 3px double var(--s-frozen);
+  padding: 1px 6px 0;
+}
+
+.stag[data-l="none"] { border-style: dashed; }
+
+/* ----- criteria meter: segments plus a ratio, and it stays a meter ----- */
+
+.meter { display: flex; align-items: center; gap: 10px; }
+.segs { display: flex; flex: 1; gap: 2px; min-width: 0; }
+.segs i { flex: 1 1 0; min-width: 1px; height: 6px; background: var(--rule-2); display: block; }
+.segs i.on { background: var(--fh); }
+
+.mnum {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.55;
+  color: var(--ink-2);
+  flex: none;
+}
+
+/* a complete meter in Needs you must not read as unstarted - it reads as awaiting sign-off */
+.card[data-signoff] .segs i.on { background: var(--s-done); }
+.card[data-signoff] .mnum { color: var(--s-done); font-weight: 650; }
+
+/* ----- decision Dialect: an explicit "no checklist", never drawn as 0% ----- */
+
+.dchk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding-top: 9px;
+  border-top: 1px dotted var(--rule-2);
+}
+
+.dchk .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.dpill {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  border: 1px solid var(--rule-2);
+  color: var(--ink-2);
+  padding: 2px 7px 1px;
+}
+
+.dpill.kind { border-style: dashed; color: var(--ink); }
+.dpill.mode { color: var(--accent); border-color: var(--accent); }
+
+.dchk .why {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.65;
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+/* ----- unclassified: the raw fields, and no guess ----- */
+
+.uncl {
+  display: block;
+  padding: 10px 12px;
+  border: 1px dashed var(--s-you);
+  border-left-width: 4px;
+  border-left-style: solid;
+  background: var(--s-you-bg);
+}
+
+.uncl .uh {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--s-you);
+  font-weight: 700;
+}
+
+.uncl .rows {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px 12px;
+}
+
+.uncl .rk {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.uncl .rv {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.uncl .uwhy {
+  display: block;
+  margin-top: 9px;
+  font-size: var(--t-lab);
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+/* ----- why a card is in Needs you, printed from the field that put it there ----- */
+
+.whyyou {
+  display: block;
+  padding: 10px 12px;
+  border-left: 4px solid var(--s-you);
+  background: var(--s-you-bg);
+}
+
+/* dashed = inferred from free-text Type:. Solid = declared by Status:. */
+.whyyou[data-src="type"] { border-left-style: dashed; }
+
+.whyyou .wl {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--s-you);
+  font-weight: 700;
+}
+
+.whyyou .wv {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.65;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.whyyou .wn { display: block; margin-top: 7px; font-size: var(--t-lab); line-height: 1.65; color: var(--ink-2); }
+
+/* ----- frozen: names the Ticket every path ends at ----- */
+
+.frozenblk {
+  display: block;
+  padding: 10px 12px;
+  border-left: 5px double var(--s-frozen);
+  background: var(--s-frozen-bg);
+}
+
+.frozenblk .zl {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--s-frozen);
+  font-weight: 700;
+}
+
+.frozenblk .zv {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.7;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.frozenblk .zn { display: block; margin-top: 7px; font-size: var(--t-lab); line-height: 1.65; color: var(--ink-2); }
+.frozenblk .goto { color: var(--s-frozen); border-color: var(--s-frozen); font-weight: 700; }
+
+/* ----- blockers: board-internal navigation, never a path ----- */
+
+.blk { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; }
+.blk .k, .ext .k {
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  flex: none;
+}
+
+.blklist { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.goto {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  padding: 2px 7px 1px;
+  border: 1px solid var(--rule-2);
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.goto:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.goto[data-open="1"] { color: var(--s-blocked); border-color: var(--s-blocked); background: var(--s-blocked-bg); }
+.goto[data-open="1"]:hover { background: var(--s-blocked); color: var(--paper); }
+.goto[data-open="0"] { color: var(--ink-3); }
+.goto.dangling { border-style: dashed; color: var(--s-blocked); cursor: default; }
+
+.ext {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+  font-size: var(--t-lab);
+  line-height: 1.65;
+  color: var(--s-blocked);
+}
+
+.ext .v { font-family: var(--mono); word-break: break-word; min-width: 0; }
+
+/* ----- status line and read error ----- */
+
+.card-foot {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink-2);
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.card-foot .k {
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  font-size: var(--t-lab);
+  line-height: 1.75;
+  color: var(--ink-3);
+  flex: none;
+}
+
+.card-foot .v { overflow-wrap: anywhere; min-width: 0; }
+
+.card-detail {
+  margin: 0;
+  font-size: var(--t-sec);
+  line-height: 1.55;
+  color: var(--s-blocked);
+  overflow-wrap: anywhere;
+}
+
+/*
+  The path is a real button. It is never an href: a file-scheme link from a page served over
+  HTTP is refused by every browser, so a link here is a link that does not work.
+*/
+.copy {
+  font: inherit;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  text-align: left;
+  color: var(--ink-3);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 3px 5px;
+  margin: 0 -5px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.copy:hover { color: var(--ink); background: var(--surface-2); }
+.copy[data-state="ok"] { color: var(--ok); border-color: var(--ok); }
+.copy[data-state="fail"] { color: var(--warn); border-color: var(--warn); }
+
+/* ---------------------------------------------------- Done, collapsed */
+
+.dig-lead {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--s-done);
+  background: var(--surface);
+  padding: 13px 14px;
+}
+
+.dig-lead .big {
+  display: block;
+  font-family: var(--mono);
+  font-size: 34px;
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--s-done);
+}
+
+.dig-lead .sub { display: block; margin-top: 8px; font-size: var(--t-sec); line-height: 1.6; color: var(--ink-2); }
+
+.digrows { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.digblock { --fh: var(--f1); }
+
+.frow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--fh);
+  padding: 9px 11px 9px 10px;
+  cursor: pointer;
+}
+
+.frow[data-accent="2"] { --fh: var(--f2); }
+.frow[data-accent="3"] { --fh: var(--f3); }
+.frow[data-accent="4"] { --fh: var(--f4); }
+.frow[data-accent="5"] { --fh: var(--f5); }
+.frow[data-accent="6"] { --fh: var(--f6); }
+
+.frow:hover { background: var(--surface-2); }
+
+.frow .fname {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.frow .fcount {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--ink-3);
+  flex: none;
+}
+
+.frow .caret { font-size: var(--t-lab); line-height: 1.6; color: var(--ink-3); display: inline-block; flex: none; }
+.frow[aria-expanded="true"] .caret { transform: rotate(90deg); }
+
+.ledger {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px dotted var(--rule-2);
+  padding-left: 9px;
+  margin-top: 2px;
+}
+
+.lrow {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  border-bottom: 1px solid var(--rule);
+  padding: 8px 3px;
+  min-width: 0;
+}
+
+.lrow .lid {
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  line-height: 1.55;
+  color: var(--fh);
+  flex: none;
+  font-weight: 600;
+}
+
+.lrow .lck { font-family: var(--mono); font-size: var(--t-lab); line-height: 1.65; color: var(--ink-2); flex: none; }
+
+.lrow .ltitle {
+  font-size: var(--t-sec);
+  line-height: 1.45;
+  color: var(--ink-2);
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------ sections below the board */
+
+.section { margin-top: 40px; }
+
+.subhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.subhead h2 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 650;
+}
+
+.subnote {
+  margin: 0;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  font-family: var(--mono);
+  color: var(--ink-3);
+  max-width: 62ch;
+}
+
+.sectnote {
+  margin: 0 0 16px;
+  font-size: var(--t-sec);
+  line-height: 1.65;
+  color: var(--ink-2);
+  border-left: 3px solid var(--rule-2);
+  padding-left: 14px;
+  max-width: 92ch;
+}
+
+.offboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.scrollx { overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; }
+
+.specrail {
+  display: flex;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  width: max-content;
+  max-width: 100%;
+}
+
+.speccol { width: 312px; flex: none; background: var(--paper); display: flex; flex-direction: column; }
+
+.speccap {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 700;
+  padding: 11px 13px 10px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-2);
+}
+
+.specbody { padding: 12px; }
+.specbody .card { --fh: var(--s-you); }
+
+.specwhy {
+  font-size: var(--t-meta);
+  line-height: 1.65;
+  color: var(--ink-2);
+  border-top: 1px dotted var(--rule-2);
+  padding: 11px 13px 14px;
+  margin: 10px 0 0;
+}
+
+.specwhy b { color: var(--ink); font-weight: 650; }
+
+/* A panel mount is absent only when its owning module leaves it empty. */
+.panelmount:empty { display: none; }
+
+/*
+  A panel that threw past its own last resort, stated by `ui/panels.js` in the mount the panel
+  owns. It lives here rather than in a panel stylesheet for the same reason the notice is built
+  outside the panel: the panel module is the thing that failed, so nothing of its own can be
+  relied on. The warn treatment is the one every other stated failure on this board already
+  uses, because it is the same kind of fact.
+*/
+.panelmount .panelfail {
+  margin: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--warn);
+  border-left: 4px solid var(--warn);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: var(--t-sec);
+  line-height: 1.65;
+  max-width: 96ch;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--rule-2);
+  background: var(--surface);
+  padding: 20px 22px;
+  margin: 18px 0;
+  max-width: 82ch;
+}
+
+.empty h2 { margin: 0 0 8px; font-size: var(--t-body); line-height: 1.5; font-weight: 600; }
+.empty p { margin: 0; color: var(--ink-2); font-size: var(--t-sec); line-height: 1.6; }
+
+/*
+  The confirmation line. Its height is reserved up front and it does not wrap, so confirming a
+  copy never shifts the page. Failure is the one case allowed to grow: the path has to become
+  selectable by hand, and that matters more than a stable line at that point.
+*/
+.copyfb {
+  position: sticky;
+  bottom: 0;
+  margin: 26px 0 0;
+  padding: 9px 0;
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+  min-height: 1.7em;
+  font-family: var(--mono);
+  font-size: var(--t-lab);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copyfb[data-mode="err"] { white-space: normal; word-break: break-all; user-select: all; }
+.copyfb b { color: var(--ok); font-weight: 600; }
+.copyfb .warn { color: var(--warn); font-weight: 600; }
+
+/* ---------------------------------------------------------------- responsive
+   The column count folds, and nothing else moves. Six columns need real width;
+   below it they wrap in the same fixed order rather than reflowing by content.
+
+   The widest fold sits at 1499px, so six columns start at 1500. The number is
+   measured, not chosen for roundness: a maximized window on a 1920x1080 screen
+   at Windows' default 125% scaling is 1536 CSS px, which is a very common way to
+   read this board. At the earlier 1560px floor that reader never saw six columns
+   at all, and six columns in a fixed order is the whole visual language here -
+   a reader who only ever meets the three-column fold never learns it. */
+
+@media (max-width: 1499px) { .board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1179px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+@media (max-width: 780px) {
+  body { padding: 0 16px 56px; }
+  .tot { text-align: left; padding-left: 0; border-left: 0; padding-right: 26px; }
+  .tot .lab { margin-left: 0; }
+  .live { margin-left: 0; width: 100%; max-width: none; }
+  .offboard { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* one Lane per row only once two would be narrower than a card wants */
+@media (max-width: 700px) { .board { grid-template-columns: minmax(0, 1fr); } }

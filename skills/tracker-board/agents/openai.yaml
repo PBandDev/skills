@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tracker Board"
+  short_description: "Open a live board for local Markdown trackers"
+  default_prompt: "Use $tracker-board to open a live board for this repository's local Markdown issue tracker."

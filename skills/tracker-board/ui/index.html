@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>tracker-board</title>
+    <!--
+      Every asset is same-origin and local. No CDN, no webfont, no remote image, no analytics:
+      the board runs offline from a fresh clone, and a page that phones home would be a page
+      reporting the contents of a private repository.
+
+      No inline event handlers and no inline script. Behaviour arrives as ES modules, which is
+      what lets the board grow by adding modules rather than by unpicking this document.
+
+      The three panel stylesheets are linked here rather than left for the work that fills them
+      in, so that work owns one new file and one stylesheet and never has to edit this page.
+    -->
+    <link rel="stylesheet" href="/ui/board.css" />
+    <link rel="stylesheet" href="/ui/corrections.css" />
+    <link rel="stylesheet" href="/ui/digest.css" />
+    <link rel="stylesheet" href="/ui/domain.css" />
+    <link rel="icon" href="data:," />
+    <script type="module" src="/ui/board.js"></script>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="mast">
+        <div class="mast-id">
+          <h1>tracker-board</h1>
+          <span class="summary" id="summary">Loading&hellip;</span>
+        </div>
+        <!--
+          `aria-live="polite"` rather than an alert: the connection state changes on its own
+          schedule, and interrupting a reader mid-sentence to say "live" is worse than telling
+          them a moment later.
+        -->
+        <span class="conn" id="conn" data-state="connecting" aria-live="polite">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="conn-text">connecting</span>
+        </span>
+      </div>
+      <!--
+        The board's two liveness tiers, stated once and stated here. It is a claim about the
+        whole board - cards read from the file system, AI content keyed to a content hash - and
+        not a caption on the one panel that happens to draw the AI tier's counts, so it stands in
+        the board's own chrome beside the board's own name.
+
+        The counts stay with the rows they count, in the Digest panel below. A count printed away
+        from the list it counts is a count that can contradict what is on screen while the reader
+        has no way to see that it does, which is why only the claim moved.
+
+        Static text, because the claim is static. Nothing on this line is derived from a
+        Snapshot, so nothing writes to it and it carries no id.
+      -->
+      <p class="tiers">
+        Cards on this board are live to the file system. The AI layer below is as-of content, not
+        as-of a clock.
+      </p>
+
+      <!--
+        The tiles. The percentage carries its own label, supplied by the Snapshot, because it
+        counts work that is finished AND off your desk - fewer Tickets than have every box
+        checked, since `ready-for-human` outranks completeness. It is the one number a reader
+        quotes out loud, and a bare percentage is a number that will be quoted wrongly.
+      -->
+      <div class="totals" id="totals"></div>
+    </header>
+
+    <p class="headline" id="headline"></p>
+
+    <!--
+      Warnings the scan produced: a skipped worktree count, an unsupported tracker, a directory
+      that could not be listed. They sit above the board because each one means the board below
+      is showing less than the disk holds, and that has to be visible rather than inferred.
+    -->
+    <ul class="notices" id="notices"></ul>
+
+    <div class="controls">
+      <span class="lab">Done column</span>
+      <span class="seg" role="group" aria-label="How the Done column is drawn">
+        <button type="button" class="chip" data-done-mode="collapsed" aria-pressed="true">
+          Collapsed
+        </button>
+        <button type="button" class="chip" data-done-mode="cards" aria-pressed="false">
+          All cards
+        </button>
+      </span>
+      <!--
+        Board announcements - where the blocker navigation landed, and where it could not.
+        Separate from the copy confirmation below because they answer different questions and
+        would otherwise overwrite each other. Its height is reserved, so announcing never
+        moves the board.
+      -->
+      <p class="live" id="live" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="empty" id="emptystate" hidden>
+      <h2>Nothing to place yet</h2>
+      <p>
+        Register a repository, or add files to its tracker directory. The columns below stay on
+        screen either way &mdash; an empty column is a fact about the board.
+      </p>
+    </div>
+
+    <main class="board" id="board" aria-label="Tickets by Lane"></main>
+
+    <!--
+      Files the board carries but cannot put in a Lane: a Ticket the parser could not read or
+      could not classify, and files that are not Tickets at all. Below the columns rather than
+      inside one, because neither holds a Lane and injecting either would put every count on
+      the page one out.
+    -->
+    <section class="section" id="offboard-section" aria-labelledby="offboard-h" hidden>
+      <div class="subhead">
+        <h2 id="offboard-h">Not on the board</h2>
+        <p class="subnote"><span id="offboard-count"></span></p>
+      </div>
+      <p class="sectnote" id="offboard-note"></p>
+      <div class="offboard" id="offboard"></div>
+    </section>
+
+    <section class="section" aria-labelledby="legend-title">
+      <div class="subhead">
+        <h2 id="legend-title">How to read a card</h2>
+        <p class="subnote" id="legend-note"></p>
+      </div>
+      <!--
+        Specimens, not Tickets. The `unclassified` treatment has to exist before the first file
+        scores that way, and the only honest place for it is a legend: a synthetic card in a
+        column would put every count on this page one out.
+      -->
+      <div class="scrollx">
+        <div class="specrail" id="legend"></div>
+      </div>
+    </section>
+
+    <!--
+      Three mounts, each owned by one module and written to by nothing else. An owner leaves its
+      mount empty only when that panel has no result to draw.
+    -->
+    <section class="section panelmount" id="corrections-panel"></section>
+    <section class="section panelmount" id="digest-panel"></section>
+    <section class="section panelmount" id="domain-panel"></section>
+
+    <!--
+      One live region for copy confirmations, shared by every path button on the page. One
+      region rather than one per card: N regions announce N times, and the reader only ever
+      copied once. Its height is reserved in CSS so confirming never shifts the layout.
+    -->
+    <p class="copyfb" id="copyfb" role="status" aria-live="polite"></p>
+  </body>
+</html>
