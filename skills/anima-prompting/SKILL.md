@@ -33,14 +33,15 @@ Negative prompt:
 [prompt text only]
 
 Recommended settings:
-Steps: 30-50
-CFG: 4-5
-Sampler: er_sde
-Resolution: use any resolution between 512^2 and 1536^2 pixels.
+Steps: [steps]
+CFG: [cfg]
+Sampler: [sampler]
+Scheduler: [scheduler]
+Resolution: [resolution guidance]
 Suggested aspect ratio: [one ratio], for example [width]x[height]
 ```
 
-Keep labels outside prompt text. Do not put settings inside prompt blocks.
+Fill settings values from Settings; Model Versions and `preferences.local.md` overrides win. Keep labels outside prompt text. Do not put settings inside prompt blocks.
 
 ## Prompt Rules
 
@@ -103,8 +104,8 @@ The prefix and settings here are tuned for Base. Confirm which checkpoint is loa
 
 | Version   | Score tags                                                                                                                                                                   | Steps / CFG   |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| Base      | Official prefix as-is (`score_7`)                                                                                                                                            | 30-50 / 4-5   |
-| Aesthetic | Avoid `score_*` in positive **and** negative — it was trained with quality tags stripped, so score tags push it toward slop. `masterpiece, best quality` is safe to keep      | 30-50 / 4-5   |
+| Base      | Official prefix as-is (`score_7`)                                                                                                                                            | Settings defaults |
+| Aesthetic | Avoid `score_*` in positive **and** negative — it was trained with quality tags stripped, so score tags push it toward slop. `masterpiece, best quality` is safe to keep      | Settings defaults |
 | Turbo     | Not documented; start with Aesthetic's rule                                                                                                                                  | 8-12 / **1**  |
 
 
@@ -112,11 +113,12 @@ Turbo-baked merges follow Turbo settings. Verify your own merges on one image be
 
 ## Settings
 
-Default:
+Defaults — single source of truth for settings values; other sections reference this one:
 
 - Steps: `30-50`
 - CFG: `4-5`
 - Sampler: `er_sde`
+- Scheduler: `simple`
 - Resolution: total pixel area between `512^2` and `1536^2`; suggestions should be divisible by 64 and near or under `1536x1536` total pixels.
 
 Turbo checkpoints override steps/CFG — see Model Versions.
@@ -194,6 +196,7 @@ Recommended settings:
 Steps: 30-50
 CFG: 4-5
 Sampler: er_sde
+Scheduler: simple
 Resolution: use any resolution between 512^2 and 1536^2 pixels.
 Suggested aspect ratio: 3:4, for example 1280x1728
 ```
@@ -206,7 +209,7 @@ Suggested aspect ratio: 3:4, for example 1280x1728
 | Mistake                                                | Fix                                                                                |
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | Enhancing a strict formatting request                  | Only reorder, normalize, and split negatives.                                      |
-| Using generic SDXL/Pony settings                       | Use Anima settings: 30-50 steps, CFG 4-5, `er_sde`.                                |
+| Using generic SDXL/Pony settings                       | Use the Settings defaults, not SDXL/Pony habits.                                   |
 | Replacing artist names with style descriptions         | Use `@artist name` unless asked for verified style alternatives.                   |
 | Making up tags                                         | Use natural language when no verified tag is known.                                |
 | Overstuffing negatives                                 | Keep the default negative plus user-specific exclusions.                           |
