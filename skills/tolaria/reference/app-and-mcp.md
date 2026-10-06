@@ -54,7 +54,9 @@ It exposes tools only: `list_vaults`, `get_vault_context`, `search_notes`, `get_
 - `recentNotes` holds the 20 most recently changed notes.
 - With several vaults active the result is `{ "vaults": [...] }`, one entry per vault.
 
-**`vaultPath`** must equal an active vault root character for character. Copy it from `list_vaults`. Pass it whenever more than one vault is active. On Windows the root carries a `\\?\` prefix: keep it for `vaultPath`, and drop it for file tools.
+**`attach_vault(path, label)`** registers an existing folder as a vault. It does not run `git init` and does not switch the active vault. The vault lists under its folder name, whatever `label` says.
+
+**`vaultPath`** must equal an active vault root character for character. Copy it from `list_vaults`. Pass it whenever more than one vault is active. On Windows the root may carry a `\\?\` prefix (a vault added with `attach_vault` has none): keep it as listed for `vaultPath`, and drop it for file tools.
 
 **Jobs MCP has no tool for:** delete, rename or move, archive, mark organized, favorite, create a non-Markdown file (a new view, an `.html` report, an attachment), list notes by type or property, read backlinks, git. Use file tools for these.
 

@@ -60,6 +60,14 @@ Add a custom relationship only when it carries meaning the two defaults cannot, 
 
 Extensions that stay clean: calendar types (Year, Quarter, Month) to anchor projects and events, Team or Area types above Responsibilities, and domain types in the user's own language (Essay, Podcast, Client).
 
+## Time
+
+- Newest first: sort a type (`_sort`) or a view (`sort`) by a date property, or by `modified` or `created`.
+- This week, this month: a view with `field: <date key>`, `op: after`, `value: 7 days ago`.
+- A day-by-day feed: **History** (`Ctrl+K`, "Go to History"; code name Pulse). It lists git commits grouped by day, so it needs a git vault with commits. AutoGit keeps it current.
+- In a git vault, `created` is the author date of the first commit that touched the file, and `modified` is the newer of the last commit and the file's own time. To import old notes with their real dates, commit each one with `GIT_AUTHOR_DATE` and `GIT_COMMITTER_DATE` set to that date.
+- There is no calendar grid. Month or quarter grouping needs calendar notes (`Year`, `Quarter`, `Month` types) that other notes point at with `belongs_to`.
+
 ## Inbox triage
 
 The Inbox holds every note that is not marked `_organized: true`, not archived, and not a type definition.

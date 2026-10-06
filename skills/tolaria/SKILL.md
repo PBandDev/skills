@@ -105,7 +105,7 @@ Often the best answer combines them: a project note with a dashboard block on to
 
 1. **Search first.** Look for the title, its key words, and likely aliases, one search per name. An existing note gets updated; a new one is for a new thing.
 2. **Choose the type** from the types the vault has, and read its type note. Start the body from its `template:` and copy its default values. The app applies templates only to notes made in the app, so apply them yourself. When the best-fitting type has no type note in this vault, use the closest type that exists and offer the new type to the user; create a type only when the user agrees.
-3. **Write the file** as `<slug>.md` in the vault root: frontmatter, H1, body. LF line endings are fine in any vault.
+3. **Write the file** as `<slug>.md` in the vault root: frontmatter, H1, body. First check that no file with that name exists, ignoring case: `agents.md` is `AGENTS.md` on Windows and macOS, and a note titled "Project" would replace the `project.md` type note. On a clash, add a suffix (`agents-project.md`) and link to that name. LF line endings are fine in any vault.
 4. **Connect it.** Give the note a relationship to its parent or its peers. A top-level hub with nothing above it, such as a new project, is connected by the notes that point at it. Link the first mention of every person, project, and topic that has a note.
 5. **Show it.** With MCP, `open_note` brings the note up in the app. In your reply, name each note you touched by title and path. You cannot see the app: when you wrote something that renders there (a dashboard, sheet, diagram, formula, or view), ask the user to check it or to send a screenshot.
 
@@ -143,7 +143,7 @@ Read `reference/app-and-mcp.md` when an MCP tool result surprises you, before yo
 
 ## Organizing
 
-Read `reference/organizing.md` when the user asks how to structure a vault, to triage the Inbox, or to check vault health, and when you must choose a type and the vault's type notes do not settle it. It covers Portent, Tolaria's default model: eight types, two relationships, and the capture, organize, archive lifecycle.
+Read `reference/organizing.md` when the user asks how to structure a vault, to see notes by time (newest first, this week, a day-by-day feed), to triage the Inbox, or to check vault health, and when you must choose a type and the vault's type notes do not settle it. It covers Portent, Tolaria's default model: eight types, two relationships, and the capture, organize, archive lifecycle.
 
 ## Preferences
 

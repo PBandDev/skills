@@ -129,7 +129,7 @@ This places an empty whiteboard for the user to draw on. Give each board in a no
 | An image size or title | An italic caption line |
 | Another note embedded in this one (`![[note]]`) | A wikilink |
 | A hard line break inside a paragraph | Two paragraphs, or a list |
-| Raw HTML or an HTML comment in the body | An `html` fence when it should render; otherwise leave it out |
+| Raw HTML, an HTML comment, or placeholder text like `<name>` (it counts as HTML) | An `html` fence when it should render; backticks around a placeholder; otherwise leave it out |
 
 The editor also normalizes on save: `*` bullets become `-`, `_italic_` becomes `*italic*`, `[!NOTE]` becomes `[!note]`, blank lines between frontmatter and H1 go, and the file ends with one newline. Writing the durable form first keeps the user's git diffs clean.
 
