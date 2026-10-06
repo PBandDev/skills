@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tolaria"
+  short_description: "Write and organize notes in a Tolaria vault."
+  default_prompt: "Use $tolaria to write, structure, or organize notes in this Tolaria vault."
