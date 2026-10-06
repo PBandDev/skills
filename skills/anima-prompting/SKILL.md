@@ -105,7 +105,7 @@ The prefix and settings here are tuned for Base. Confirm which checkpoint is loa
 | Version   | Score tags                                                                                                                                                                   | Steps / CFG   |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | Base      | Official prefix as-is (`score_7`)                                                                                                                                            | Settings defaults |
-| Aesthetic | Avoid `score_*` in positive **and** negative — it was trained with quality tags stripped, so score tags push it toward slop. `masterpiece, best quality` is safe to keep      | Settings defaults |
+| Aesthetic | Avoid `score_*` in positive **and** negative — it was trained with quality tags stripped, so score tags push it toward slop. `masterpiece, best quality` is safe to keep      | Settings defaults; tolerates CFG as low as 3 and often looks better there |
 | Turbo     | Not documented; start with Aesthetic's rule                                                                                                                                  | 8-12 / **1**  |
 
 
@@ -116,7 +116,7 @@ Turbo-baked merges follow Turbo settings. Verify your own merges on one image be
 Defaults — single source of truth for settings values; other sections reference this one:
 
 - Steps: `30-50`
-- CFG: `4-5`
+- CFG: `4-6`
 - Sampler: `er_sde`
 - Scheduler: `simple`
 - Resolution: total pixel area between `512^2` and `1536^2`; suggestions should be divisible by 64 and near or under `1536x1536` total pixels.
@@ -194,7 +194,7 @@ worst quality, low quality, score_1, score_2, score_3, artist name, blurry, jpeg
 
 Recommended settings:
 Steps: 30-50
-CFG: 4-5
+CFG: 4-6
 Sampler: er_sde
 Scheduler: simple
 Resolution: use any resolution between 512^2 and 1536^2 pixels.
