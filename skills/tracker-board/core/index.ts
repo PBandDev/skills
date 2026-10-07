@@ -530,7 +530,7 @@ const AMENDMENT = /^ {0,3}##[ \t]+(Amendment\b.*?)[ \t]*$/im;
 /**
  * A glossary term: a line opening with a bold span that is followed by a colon.
  *
- * The colon is what makes this a definition rather than a bold sentence. `CONTEXT.md` wraps
+ * The colon is what makes this a definition rather than a bold sentence. `GLOSSARY.md` wraps
  * its entries, so a continuation line can itself begin with a bold span — `**auto-expires
  * when its source changes** rather than lying forever.` is the back half of the Annotation
  * entry, not a thirtieth term, and it is excluded by carrying no colon.

@@ -9,7 +9,7 @@
  * files, digest JSON, ticket text — is validated at runtime independently of the type
  * that describes it.
  *
- * Vocabulary is `CONTEXT.md` § tracker-board. Where a term is capitalised in a comment
+ * Vocabulary is `GLOSSARY.md` § tracker-board. Where a term is capitalised in a comment
  * — Root, Feature, Ticket, Dialect, Lane, Frontier, Snapshot, Annotation, Override,
  * Extraction, Derivation, Digest, Block — it means what the glossary says it means and
  * not a synonym.

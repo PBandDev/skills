@@ -1,7 +1,7 @@
 /**
  * The `Status:` field.
  *
- * Vocabulary here is `CONTEXT.md`'s — Ticket, Dialect, Lane — and means what the glossary
+ * Vocabulary here is `GLOSSARY.md`'s — Ticket, Dialect, Lane — and means what the glossary
  * says it means.
  *
  * Statuses are **unbounded free text**. The longest observed in the sample ran 178

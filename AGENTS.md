@@ -52,4 +52,4 @@ Default five-role vocabulary, recorded as a `Status:` line in each issue file. S
 
 ### Domain docs
 
-Single-context — `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context — `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

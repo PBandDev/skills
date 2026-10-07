@@ -245,7 +245,7 @@ test('the skill runs the changed-only reconciliation pass on every invocation an
 
   const readme = readFileSync(join(REPO_DIR, 'README.md'), 'utf8');
   assert.match(readme, /tracker-board[^\n]*changed-file reconciliation/i);
-  const context = section(readFileSync(join(REPO_DIR, 'CONTEXT.md'), 'utf8'), 'tracker-board');
+  const context = section(readFileSync(join(REPO_DIR, 'GLOSSARY.md'), 'utf8'), 'tracker-board');
   assert.match(context, /Reconciliation[\s\S]{0,500}three\s+distinct\s+files/i);
 
   const tool = readFileSync(join(SKILL_DIR, 'tools', 'reconcile.ts'), 'utf8');
@@ -550,7 +550,7 @@ test('repository docs, UI metadata, and fixture policy agree with the shipped sk
   const readme = readFileSync(join(REPO_DIR, 'README.md'), 'utf8');
   assert.match(readme, /^\| `tracker-board` \|[^\n]+\|$/m);
 
-  const context = readFileSync(join(REPO_DIR, 'CONTEXT.md'), 'utf8');
+  const context = readFileSync(join(REPO_DIR, 'GLOSSARY.md'), 'utf8');
   const tracker = section(context, 'tracker-board');
   assert.match(tracker, /A live board/i);
   assert.match(tracker, /"Read-only" means[\s\S]{0,160}never writes a watched repository/i);

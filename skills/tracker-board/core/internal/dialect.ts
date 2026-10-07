@@ -1,7 +1,7 @@
 /**
  * Dialect scoring and `unclassified`.
  *
- * Vocabulary here is `CONTEXT.md`'s — Ticket, Dialect, Lane, Criteria — and means what the
+ * Vocabulary here is `GLOSSARY.md`'s — Ticket, Dialect, Lane, Criteria — and means what the
  * glossary says it means.
  *
  * Which field vocabulary a Ticket file speaks, decided by **scoring observed syntax**

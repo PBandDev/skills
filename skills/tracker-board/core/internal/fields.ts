@@ -1,7 +1,7 @@
 /**
  * Field scanning and Ticket identity.
  *
- * Vocabulary here is `CONTEXT.md`'s — Ticket, Dialect, Lane, Extraction — and means what the
+ * Vocabulary here is `GLOSSARY.md`'s — Ticket, Dialect, Lane, Extraction — and means what the
  * glossary says it means.
  *
  * Rules this module honours — every one of them is a measured defect, not a preference:

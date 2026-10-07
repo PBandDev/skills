@@ -1,7 +1,7 @@
 /**
  * The criteria region and `Type:` HITL/AFK routing.
  *
- * Vocabulary here is `CONTEXT.md`'s — Ticket, Criteria, Dialect, Lane — and means what the
+ * Vocabulary here is `GLOSSARY.md`'s — Ticket, Criteria, Dialect, Lane — and means what the
  * glossary says it means.
  *
  * Two extractions that share one hazard: both are ruined by matching too widely.

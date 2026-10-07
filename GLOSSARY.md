@@ -1,4 +1,4 @@
-# Context
+# Glossary
 
 Domain glossary for this repo. Sectioned per skill — skills here are unrelated to one
 another, and their vocabularies must not bleed.
