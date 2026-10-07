@@ -15,6 +15,7 @@ This repository publishes reusable agent skills through GitHub and skills.sh. Ke
 - Keep each skill focused on one reusable workflow or domain.
 - Optimize `description` for trigger conditions, not workflow summaries.
 - Avoid local paths, private notes, research artifacts, or dated claims in public `SKILL.md` files.
+- Write for an agent in any harness (Claude Code, Codex, Cursor) that has only this skill and its own tools. A step that relies on a host app's system prompt, bundled docs, or MCP server also gives the path for an agent without it.
 - If a skill targets a specific library version, state the version it was written for.
 
 ## Validation
@@ -23,6 +24,12 @@ Run local discovery before pushing:
 
 ```bash
 npx skills add . --list
+```
+
+When `skills/tracker-board` changed, also run its tests (Node 22.18+):
+
+```bash
+cd skills/tracker-board && node --test
 ```
 
 ## skills.sh Indexing
