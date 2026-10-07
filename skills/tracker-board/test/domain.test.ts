@@ -97,7 +97,7 @@ function populatedRoot(): Root {
       file('docs/adr/0001-ai-extracts-code-derives.md', ADR_0001),
       file('docs/adr/0002-zero-dependency.md', ADR_0002),
     ],
-    glossaryFile: file('CONTEXT.md', GLOSSARY),
+    glossaryFile: file('GLOSSARY.md', GLOSSARY),
   });
 }
 
@@ -228,8 +228,8 @@ test('an ADR that could not be read is kept, with its reason, and claims no titl
 
 test('the glossary is a counted pointer, and absent is told apart from unreachable', () => {
   const counted = derive(populatedRoot()).roots[0]?.glossary;
-  assert.equal(counted?.path, 'CONTEXT.md');
-  assert.equal(counted?.absPath, `${ROOT}/CONTEXT.md`);
+  assert.equal(counted?.path, 'GLOSSARY.md');
+  assert.equal(counted?.absPath, `${ROOT}/GLOSSARY.md`);
   assert.equal(counted?.readError, null);
   // Three terms, not four: `**not by anything a person typed**` opens a wrapped continuation
   // line and carries no colon, so it is the back half of the Lane entry rather than a term.
@@ -256,7 +256,7 @@ test('the glossary is a counted pointer, and absent is told apart from unreachab
 
   const single = drawInto(
     panelDocument(),
-    derive(root({ glossaryFile: file('CONTEXT.md', '# Context\n\n## One\n\n**Root**: a repo.\n') })),
+    derive(root({ glossaryFile: file('GLOSSARY.md', '# Context\n\n## One\n\n**Root**: a repo.\n') })),
   );
   assert.deepEqual(textOf(single, '.dom-big'), ['1', '1']);
   assert.deepEqual(textOf(single, '.dom-unit'), ['term', 'section']);
@@ -264,12 +264,12 @@ test('the glossary is a counted pointer, and absent is told apart from unreachab
   assert.equal(derive(root({})).roots[0]?.glossary, null, 'a Root with no glossary has one');
 
   const unreachable = derive(
-    root({ glossaryFile: file('CONTEXT.md', null, 'EBUSY: resource busy') }),
+    root({ glossaryFile: file('GLOSSARY.md', null, 'EBUSY: resource busy') }),
   ).roots[0]?.glossary;
   assert.notEqual(unreachable, null, 'an unreachable glossary reads as a Root that has none');
   assert.equal(unreachable?.readError, 'EBUSY: resource busy');
   assert.equal(unreachable?.termCount, 0);
-  assert.equal(unreachable?.path, 'CONTEXT.md', 'an unreachable glossary lost its path');
+  assert.equal(unreachable?.path, 'GLOSSARY.md', 'an unreachable glossary lost its path');
 });
 
 test('a fenced block cannot fabricate an Amendment heading, a title or a section', () => {
@@ -287,7 +287,7 @@ test('a fenced block cannot fabricate an Amendment heading, a title or a section
   const glossary = derive(
     root({
       glossaryFile: file(
-        'CONTEXT.md',
+        'GLOSSARY.md',
         '# Context\n\n## Terms\n\n**Root**: a repo.\n\n~~~sh\n## not a section\n**Fake**: not a term\n~~~\n',
       ),
     }),
@@ -316,7 +316,7 @@ test('CRLF text is read the same as LF, and a setext heading is refused rather t
   }
 
   const glossary = derive(
-    root({ glossaryFile: file('CONTEXT.md', '# Context\r\n\r\n## Terms\r\n\r\n**Root**: a repo.\r\n') }),
+    root({ glossaryFile: file('GLOSSARY.md', '# Context\r\n\r\n## Terms\r\n\r\n**Root**: a repo.\r\n') }),
   ).roots[0]?.glossary;
   assert.equal(glossary?.termCount, 1, 'a CRLF glossary counted no terms');
   assert.equal(glossary?.sectionCount, 1);
@@ -419,7 +419,7 @@ test('nothing that is not live markdown can fabricate a title, a heading or a co
   const glossary = derive(
     root({
       glossaryFile: file(
-        'CONTEXT.md',
+        'GLOSSARY.md',
         `# C\n\n## Real\n\n**Real**: a term.\n\n<!--\n## Fabricated\n**Fabricated**: not a term.\n-->\n`,
       ),
     }),
@@ -484,7 +484,7 @@ test('an unreadable file with an empty reason still reads as unreachable, not as
   const snapshot = derive(
     root({
       adrFiles: [file('docs/adr/0040-gone.md', null, '')],
-      glossaryFile: file('CONTEXT.md', null, ''),
+      glossaryFile: file('GLOSSARY.md', null, ''),
     }),
   );
   const entry = adrsOf(snapshot)[0];
@@ -501,7 +501,7 @@ test('an unreadable file with an empty reason still reads as unreachable, not as
 test('a glossaryFile that is not a file record is stated, never read as a Root with no glossary', () => {
   // Both `adrFiles` and `glossaryFile` need the same shape guard; otherwise a bare string, a
   // number or a list becomes the ordinary answer "this Root has no glossary".
-  for (const bad of ['CONTEXT.md', 42, false, ['CONTEXT.md']]) {
+  for (const bad of ['GLOSSARY.md', 42, false, ['GLOSSARY.md']]) {
     const broken = { ...root({}), glossaryFile: bad } as unknown as Root;
     const snapshot = derive(broken);
     assert.equal(snapshot.roots[0]?.glossary, null);
@@ -883,7 +883,7 @@ test('an unreachable ADR and an unreachable glossary are drawn as unreachable, n
           file('docs/adr/0001-ai-extracts-code-derives.md', ADR_0001),
           file('docs/adr/0002-gone.md', null, 'EACCES: permission denied'),
         ],
-        glossaryFile: file('CONTEXT.md', null, 'EBUSY: resource busy'),
+        glossaryFile: file('GLOSSARY.md', null, 'EBUSY: resource busy'),
       }),
     ),
   );

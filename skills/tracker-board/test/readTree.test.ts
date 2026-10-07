@@ -183,7 +183,7 @@ test('domain-model inputs are collected with Root-relative paths', (t) => {
     'docs/adr/0001-first-decision.md': '# 0001 — First decision\n',
     'docs/adr/0002-second-decision.md': '# 0002 — Second decision\n\n## Amendment\n',
     'docs/adr/notes.txt': 'not an ADR\n',
-    'CONTEXT.md': '# Context\n\n**Root**: a repo the board is watching.\n',
+    'GLOSSARY.md': '# Context\n\n**Root**: a repo the board is watching.\n',
   });
   const root = readTree(dir);
 
@@ -197,15 +197,15 @@ test('domain-model inputs are collected with Root-relative paths', (t) => {
   }
 
   const glossary = root.glossaryFile;
-  assert.ok(glossary !== null, 'the Root has a CONTEXT.md; the walk did not collect it');
-  assert.equal(glossary.path, 'CONTEXT.md');
+  assert.ok(glossary !== null, 'the Root has a GLOSSARY.md; the walk did not collect it');
+  assert.equal(glossary.path, 'GLOSSARY.md');
   assert.ok(typeof glossary.text === 'string' && glossary.text.includes('Root'));
 });
 
 test('an ADR directory or glossary resolving outside the Root is refused, never emitted as ../', (t) => {
   const dir = tempTree(t, { '.scratch/alpha/issues/01-a.md': '# 01 — a\n' });
 
-  const escaped = readTree(dir, { adrDir: '../..', glossaryPath: '../../CONTEXT.md' });
+  const escaped = readTree(dir, { adrDir: '../..', glossaryPath: '../../GLOSSARY.md' });
   assert.deepEqual(escaped.adrFiles, [], 'ADRs were read from outside the Root');
   assert.equal(escaped.glossaryFile, null, 'the glossary was read from outside the Root');
   assert.equal(
@@ -792,7 +792,7 @@ test('an ADR or glossary link out of the Root is represented but never read', ()
   const fs = fakeFs({
     'repo/.scratch/alpha/issues/01-a.md': { kind: 'file', text: '# 01 — a\n' },
     'repo/docs/adr/0001-linked.md': { kind: 'link', target: 'outside/secrets.md' },
-    'repo/CONTEXT.md': { kind: 'link', target: 'outside/secrets.md' },
+    'repo/GLOSSARY.md': { kind: 'link', target: 'outside/secrets.md' },
     'outside/secrets.md': { kind: 'file', text: `token ${secret}\n` },
   });
 

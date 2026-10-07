@@ -35,7 +35,7 @@
  * |---|---|---|
  * | `Root.files[].path` | `trackerPath` | `checkout-flow/issues/01-light-theme-default.md` |
  * | `Root.adrFiles[].path` | `rootPath` | `docs/adr/0001-ai-extracts-code-derives.md` |
- * | `Root.glossaryFile.path` | `rootPath` | `CONTEXT.md` |
+ * | `Root.glossaryFile.path` | `rootPath` | `GLOSSARY.md` |
  *
  * ADRs and the glossary live **outside** the tracker directory, so a tracker-relative path
  * for them would read `../docs/adr/….md`. That is not what `core/types.ts` declares and not
@@ -109,7 +109,7 @@ const DEFAULT_TRACKER_DIR = '.scratch';
 /** Where ADRs live, relative to the Root. */
 const DEFAULT_ADR_DIR = 'docs/adr';
 /** The Root's glossary, relative to the Root. */
-const DEFAULT_GLOSSARY = 'CONTEXT.md';
+const DEFAULT_GLOSSARY = 'GLOSSARY.md';
 /** Backstop only. Real tracker trees are three or four levels deep. */
 const DEFAULT_MAX_DEPTH = 24;
 /** Backstop only. A tracker file is markdown; this stops one huge file wedging a scan. */
@@ -251,7 +251,7 @@ export interface ReadTreeOptions {
   readonly label?: string;
   /** ADR directory, **Root-relative**. Default `docs/adr`. Anything outside the Root is refused. */
   readonly adrDir?: string;
-  /** Glossary file, **Root-relative**. Default `CONTEXT.md`. Anything outside the Root is refused. */
+  /** Glossary file, **Root-relative**. Default `GLOSSARY.md`. Anything outside the Root is refused. */
   readonly glossaryPath?: string;
   /** Files above this many bytes are not read; the card states why. Default 4 MiB. */
   readonly maxFileBytes?: number;
