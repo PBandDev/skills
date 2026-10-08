@@ -1,6 +1,6 @@
 ---
 name: tolaria
-description: Use when working in a Tolaria vault or with Tolaria MCP tools (search_notes, get_vault_context, open_note) — capturing, writing, or restructuring notes; building sheet notes, HTML dashboards, types, relationships, or saved views; organizing a Markdown knowledge base that uses `type:` frontmatter and `views/*.yml`.
+description: Use when working in a Tolaria vault or with Tolaria MCP tools
 ---
 
 # Tolaria
