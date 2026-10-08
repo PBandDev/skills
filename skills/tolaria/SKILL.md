@@ -12,10 +12,10 @@ description: Use when working in a Tolaria vault or with Tolaria MCP tools (sear
 Once per session, before the first write.
 
 1. **Find the vault.** With Tolaria MCP tools: `list_vaults`, then `get_vault_context`. Without them: it is your working directory when that holds an `AGENTS.md` naming Tolaria or notes with `type:` frontmatter; otherwise ask the user for its path. Then read every note with `type: Type`.
-2. **Read the rules.** Read the vault's `AGENTS.md`. The most specific wins: the user's request, then the rules that file states, then `preferences.local.md` (see Preferences), then this skill.
+2. **Read the rules.** Read the vault's `AGENTS.md`, then `preferences.local.md` in this skill's folder, beside this `SKILL.md`: the user's overrides for every vault. That file is gitignored, so Grep, ripgrep, and `git ls-files` hide it; read it by path, and a missing file means no overrides. The most specific wins: the user's request, then the vault's `AGENTS.md`, then `preferences.local.md`, then this skill.
 3. **Learn the house style.** Read the type note and two or three existing notes of the type you are about to write. For a type that is new, read the vault's other type notes. Copy their key spellings (`related_to` or `Related to`), status values, date and value formats, and section habits. Real notes are the evidence: a sample snippet in `AGENTS.md` is an illustration, and the defaults below are a fallback. Where the vault's own notes disagree with each other, follow the majority for that type, use the defaults below on a tie, and tell the user about the drift.
 
-Done when you can name the vault, its types, and the exact keys and status values you will write.
+Done when you can name the vault, its types, and the exact keys and status values you will write, and `preferences.local.md` is in context or its path returned not found.
 
 ## The model
 
@@ -147,7 +147,7 @@ Read `reference/organizing.md` when the user asks how to structure a vault, to s
 
 ## Preferences
 
-If `preferences.local.md` exists in this skill's directory, read it when this skill activates and apply it as the user's overrides to the defaults here. The file is intentionally untracked; copy `preferences.example.md` to create it. Rules for a single vault belong in that vault's `AGENTS.md`, which wins inside that vault.
+`preferences.local.md` is read in Orient. Users create it by copying `preferences.example.md`. Rules for a single vault belong in that vault's `AGENTS.md`, which wins inside that vault.
 
 When the user tells you to remember a preference about how their notes are written or organized, record it: in `preferences.local.md` when it holds for every vault, under a `## Preferences` heading in the vault's `AGENTS.md` when it holds for one. When they only mention one in passing, offer to record it. Afterwards, report the existing notes that break the new rule, and change them when the user says so.
 

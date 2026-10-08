@@ -9,6 +9,12 @@ description: Use when formatting, cleaning, enhancing, or troubleshooting prompt
 
 Anima is an illustration-focused text-to-image model trained on Danbooru-style tags, natural-language captions, and mixtures of both. Default to strict compliance: preserve the user's idea, clean ordering/formatting, and avoid adding creative details unless the user explicitly asks to enhance.
 
+## User Preferences
+
+Before writing the first prompt, open `preferences.local.md` in this skill's folder, beside this `SKILL.md`, and apply it: the locked recipes, default tags, negative prompts, and settings there win over every default below. The file is gitignored, so Grep, ripgrep, and `git ls-files` hide it; read it by path. A missing file means no overrides. Users create it by copying `preferences.example.md`.
+
+Done when its contents are in context or the path returned not found.
+
 ## Mode
 
 
@@ -147,10 +153,6 @@ Common /64 suggestions:
 
 Pick one ratio from the prompt: portraits usually `2:3` or `3:4`; full-body single characters `2:3` or `9:16`; landscapes/battles/wide/cinematic scenes `16:9` or `3:2`; icons/centered studies `1:1`; tall poster compositions `9:16`; unclear anime illustration `2:3`.
 
-## User Preferences
-
-If `preferences.local.md` exists in this skill's directory, read it when this skill activates and apply its contents as user overrides — locked recipes, default tags, negative prompts, and settings there win over the defaults above. The file is intentionally untracked; copy `preferences.example.md` to create your own.
-
 ## Dataset And Natural Language
 
 Use dataset tags for non-anime artistic prompting, not ordinary anime tags. Dataset prompts are an exception to the normal positive prefix: the first character of the positive prompt must be the dataset tag, with no quality/meta tags before it.
@@ -217,7 +219,7 @@ Suggested aspect ratio: 3:4, for example 1280x1728
 | Prefixing dataset prompts with quality tags            | Put `ye-pop` or `deviantart` at the absolute start.                                |
 | Forgetting safety tag conflicts                        | Use exactly one safety tag unless the user explicitly asks otherwise.              |
 | Listing multiple known characters with no descriptions | Add concise visual descriptions to reduce blending.                                |
-| Ignoring `preferences.local.md`                        | If it exists in the skill directory, its overrides win over the defaults here.     |
+| Calling `preferences.local.md` missing after a Grep or `rg` search | Git-aware search hides gitignored files. Read it by path; see User Preferences. |
 | Using SDXL-scale weights (`1.1`, `1.2`)                | Anima needs higher — `(tag:2)` is normal use.                                      |
 | Ignoring which Anima version is loaded                 | Aesthetic drops `score_*`; Turbo is CFG 1 / 8-12 steps. See Model Versions.        |
 
