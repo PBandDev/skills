@@ -92,12 +92,14 @@ Match the content to the form that serves the user best. Before you write a form
 | Any note body: prose with callouts, tables, tasks, diagrams, math | Durable Markdown | `reference/rich-notes.md` |
 | A project, meeting, person, decision, procedure, log, or reference item | A note built on that kind's pattern | `reference/note-patterns.md` |
 | Rows, numbers, totals, a tracker the user keeps extending | A sheet note | `reference/sheets.md` |
-| A glance at live values: status tiles, KPIs, progress | An HTML block dashboard in a hub note | `reference/dashboards.md` |
+| An HTML visual requested inside a note, including existing HTML or live dashboards | A fenced HTML block in that note | `reference/dashboards.md` |
 | A finished static report or handout | A standalone `.html` file | `reference/dashboards.md` |
 | A recurring question over many notes | A saved view | `reference/views-and-types.md` |
 | A recurring kind of thing | A type definition | `reference/views-and-types.md` |
 | A fact to filter or sort on | A property | Frontmatter, above |
 | A connection to navigate | A relationship | Relationships, above |
+
+For a blank HTML preview, read `reference/dashboards.md`.
 
 Often the best answer combines them: a project note with a dashboard block on top, a sheet for its budget, and a view that lists its open tasks.
 
@@ -107,7 +109,7 @@ Often the best answer combines them: a project note with a dashboard block on to
 2. **Choose the type** from the types the vault has, and read its type note. Start the body from its `template:` and copy its default values. The app applies templates only to notes made in the app, so apply them yourself. When the best-fitting type has no type note in this vault, use the closest type that exists and offer the new type to the user; create a type only when the user agrees.
 3. **Write the file** as `<slug>.md` in the vault root: frontmatter, H1, body. First check that no file with that name exists, ignoring case: `agents.md` is `AGENTS.md` on Windows and macOS, and a note titled "Project" would replace the `project.md` type note. On a clash, add a suffix (`agents-project.md`) and link to that name. LF line endings are fine in any vault.
 4. **Connect it.** Give the note a relationship to its parent or its peers. A top-level hub with nothing above it, such as a new project, is connected by the notes that point at it. Link the first mention of every person, project, and topic that has a note.
-5. **Show it.** With MCP, `open_note` brings the note up in the app. In your reply, name each note you touched by title and path. You cannot see the app: when you wrote something that renders there (a dashboard, sheet, diagram, formula, or view), ask the user to check it or to send a screenshot.
+5. **Show it.** With MCP, `open_note` brings the note up in the app. In your reply, name each note you touched by title and path. If you cannot inspect rendered content in the app, ask the user to check it or send a screenshot.
 
 Done when the frontmatter parses, every wikilink you wrote resolves to an existing file, and the note is connected or you have told the user it stands alone.
 
