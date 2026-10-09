@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArtCraft"
+  short_description: "Edit across ArtCraft apps through discovered interfaces."
+  default_prompt: "Use $artcraft to inspect the target app and complete this edit."

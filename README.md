@@ -27,6 +27,7 @@ npx skills add PBandDev/skills --skill electrobun
 | Skill | Use when |
 | --- | --- |
 | `anima-prompting` | Formatting, cleaning, enhancing, or troubleshooting prompts for CircleStone Labs Anima, including tag order, quality/score/safety tags, artist and dataset tags, negative prompts, natural-language captions, LoRA syntax, and generation settings. |
+| `artcraft` | Editing or automating PhotoCraft, VectorCraft, FilmCraft, and EffectCraft through their discovered desktop, headless, and MCP/CLI interfaces. |
 | `electrobun` | Building, editing, or debugging Electrobun desktop apps, including config, BrowserWindow/BrowserView, typed RPC, `views://` assets, bundling, updates, native renderers, and Electron migration issues. |
 | `photocraft` | Editing images with PhotoCraft through its MCP tools or `photocraft-cli`, including setup, file access, the live-window bridge, and the traps that make edits fail silently. |
 | `pixi-vn` | Building, editing, debugging, or reviewing Pixi VN visual novel and 2D game projects, including labels, narration, storage, save/load, canvas assets, UI layers, sound, Ink, and templates. |
