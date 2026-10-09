@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhotoCraft"
+  short_description: "Edit images in PhotoCraft by agent."
+  default_prompt: "Use $photocraft to make this image edit in PhotoCraft."
