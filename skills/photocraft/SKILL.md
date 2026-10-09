@@ -32,7 +32,7 @@ Take the first path that fits:
 
 ## Files over MCP
 
-The MCP server reads and writes only beneath its **roots**, set at launch. Every path is relative to its root and uses `/`: `in/photo.jpg`.
+The MCP server reads and writes only beneath its **roots**, set at launch. Every path is relative to its root and uses `/`: `in/photo.jpg`. The roots appear only in the server's launch args (`--automation-read-root`, `--automation-write-root`) in the harness's MCP config; in Claude Code, `claude mcp get photocraft` prints them. With a drive root such as `C:\`, drop the drive: `C:\Users\me\photo.jpg` becomes `Users/me/photo.jpg`.
 
 | Error contains | Fix |
 | --- | --- |
