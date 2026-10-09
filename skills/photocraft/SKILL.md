@@ -18,7 +18,7 @@ Route by the document the user wants changed, then by the available tools:
 | Keep headless documents open across adaptive edits | Reuse an existing headless MCP session, or use `photocraft-cli serve` through a persistent pipe or localhost TCP connection. |
 | Headless work in a harness with MCP but no shell | Headless MCP. |
 
-For live and independent work together, bridge MCP plus CLI/`serve` avoids registering a second MCP tool catalog. Two MCP instances remain an option when both sessions need MCP access. Each MCP process selects one backend at launch; matching tool names do not identify its mode. Check launch configuration before choosing a session.
+For live and independent work together, bridge MCP plus CLI/`serve` avoids registering a second MCP tool catalog. Two MCP instances remain an option when both sessions need MCP access. Each MCP process selects one backend at launch; matching tool names do not identify its mode. Check launch configuration to identify the backend and confirm roots cover the intended input and output paths before launching.
 
 Headless and desktop sessions have separate documents and histories. To transfer work, save a layered file and open it in the destination session; this does not synchronize unsaved changes. Confirm the active document with inspection before editing.
 

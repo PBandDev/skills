@@ -28,7 +28,7 @@ With shell access, `serve` provides a persistent engine without an MCP catalog:
 photocraft-cli serve --automation-read-root <read-dir> --automation-write-root <write-dir>
 ```
 
-Keep the process and its stdin open across requests; closing stdin ends the stdio session. If the harness cannot retain an interactive pipe, add `--port <port> --control-token-file <token-file>` and send requests over localhost TCP. Authenticate each TCP connection as described under Live desktop below. Stdio needs no token handshake.
+Keep one `serve` session through inspection, adaptive editing, verification, and saving; for stdio, keep stdin open until finished. If the harness cannot retain an interactive pipe, add `--port <port> --control-token-file <token-file>` and send requests over localhost TCP. Authenticate each TCP connection as described under Live desktop below. Stdio needs no token handshake.
 
 Requests and replies are newline-delimited JSON, not MCP messages. Match replies by `id` and check `ok` before continuing. For example, within one session:
 
