@@ -1,0 +1,4 @@
+interface:
+  display_name: "LANraragi"
+  short_description: "Search, tag, and organize a LANraragi library."
+  default_prompt: "Use $lanraragi to work with archives on my LANraragi server."
