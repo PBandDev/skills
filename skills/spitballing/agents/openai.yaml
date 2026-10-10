@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spitballing"
+  short_description: "Gut-check a half-baked idea before work starts."
+  default_prompt: "Use $spitballing on this idea: "
