@@ -5,7 +5,7 @@ description: Use when editing images or automating the desktop in PhotoCraft, ru
 
 # PhotoCraft
 
-Written for PhotoCraft 0.5.0. Edits use **engine commands** with JSON params. Discover commands from the installed app; this skill covers routing, editing, and mode-specific traps.
+Written for PhotoCraft 0.7.0. Edits use **engine commands** with JSON params. Discover commands from the installed app; this skill covers routing, editing, and mode-specific traps.
 
 ## Choose the session
 
@@ -22,7 +22,7 @@ For live and independent work together, bridge MCP plus CLI/`serve` avoids regis
 
 Headless and desktop sessions have separate documents and histories. To transfer work, save a layered file and open it in the destination session; this does not synchronize unsaved changes. Confirm the active document with inspection before editing.
 
-For a missing connection, CLI/`serve` invocation, filesystem errors, or mode-specific tools, read [Connection and file access](references/connection.md). Follow the branch for the chosen session.
+For connection setup or failures, CLI/`serve` invocation, filesystem errors, or mode-specific tools, read [Connection and file access](references/connection.md). Follow the branch for the chosen session.
 
 ## Discover commands
 
@@ -48,7 +48,7 @@ Done when the requested result is visually checked, saved outputs are identified
 ## Editing traps
 
 - **New layers land just above the active layer and become active.** Run `layer.selectTop` before adding a layer meant for the top of the stack. After an adjustment, type, or fill layer is added, filters and `image.adjustments.*` fail with `filters need a pixel layer`; select the pixel layer first: `layer.select {layer: <id>}`.
-- **Selections scope edits.** Filters and pixel edits apply only inside an active selection; run `select.deselect` when done. A new adjustment layer ignores the selection: run `layer.layerMask.revealSelection` while the selection is still active, then confirm `hasMask: true` in `doc_inspect`.
+- **Selections scope edits.** Filters and pixel edits apply only inside an active selection; run `select.deselect` when done. New adjustment/fill layers use a supplied path as a vector mask; otherwise they inherit the selection as a pixel mask, or get a reveal-all mask without a selection. Inspect the resulting mask.
 - **Layer ids belong to the session.** They are shared across its open documents. A new CLI `run` opens a fresh session; inspect again instead of carrying ids across runs.
 - **Bounds come in two formats.** Command replies give `[left, top, right, bottom]`; `doc_inspect` and `info` give `[x, y, width, height]`.
 - **Batches are not transactions.** `command_batch {steps, stop_on_error: true}` stops at the first failure, and the steps before it stay applied.

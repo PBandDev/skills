@@ -55,6 +55,8 @@ photocraft-cli mcp --bridge 127.0.0.1:<port> --control-token-file <token-file>
 
 Preserve unsaved documents before any restart needed to enable control. Roots belong to the desktop process, not the bridging CLI.
 
+After a bridge timeout or lost reply, inspect state before retrying an edit: the operation may already have completed. The bridge reconnects on the next call without replaying the failed request.
+
 Without MCP, use a socket-capable shell/runtime to send JSON lines directly to the desktop's localhost TCP port. The first request on each connection is authentication:
 
 ```json
@@ -72,7 +74,7 @@ Bridge-specific differences:
 
 ## Roots and file errors
 
-MCP and `serve` paths are relative to the corresponding automation root and use `/`, such as `in/photo.jpg`. Read and write roots may differ; omitted roots grant no access in that direction. Resolve paths against the actual configured root rather than stripping a drive or guessing.
+MCP and `serve` accept `/`-separated paths relative to the corresponding automation root, such as `in/photo.jpg`, or absolute paths beneath it. Read and write roots may differ; omitted roots grant no access in that direction.
 
 | Session | Where to find or change roots |
 | --- | --- |
@@ -85,8 +87,9 @@ The desktop root environment variables do not configure headless MCP or `serve`;
 | Error contains | Fix |
 | --- | --- |
 | `read authority is absent` / `write authority is absent` | Configure the missing root on the owning process above. |
-| `drive, device and stream prefixes are not allowed` | Pass a path relative to the configured root. |
-| `alternate separators are not allowed` | Use `/`. |
+| `absolute paths must be inside the automation root` | Use a path beneath the correct read or write root, matching the root's configured spelling. |
+| `drive, device and stream prefixes are not allowed` | Resolve a full absolute path beneath the configured root, or supply a root-relative path. |
+| `alternate separators are not allowed` | Use `/` in relative paths. |
 | `failed (NotFound)` on a save | Ensure the output's parent directory exists beneath the write root. |
 | `uses ambient filesystem paths and is disabled` | For authorized independent file work, use trusted-local CLI `run`; for a live document, preserve its state before transferring to a CLI workflow. |
 | `only a PSD, PSB or .pcraft file is written back` | Give the save an explicit output path. |
