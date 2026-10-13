@@ -5,50 +5,49 @@ description: Use when editing images or automating the desktop in PhotoCraft, ru
 
 # PhotoCraft
 
-Written for PhotoCraft 0.7.0. Edits use **engine commands** with JSON params. Discover commands from the installed app; this skill covers routing, editing, and mode-specific traps.
+Use the installed app's interfaces as the authority. Discover the commands and session behavior needed for the task; this skill supplies the editing workflow.
 
-## Choose the session
+## 1. Choose the session
 
-Route by the document the user wants changed, then by the available tools:
+Identify the installed version, input, and intended output. With shell access, locate `photocraft-cli` on PATH or in the installation directory and read `--help`. With MCP, inspect its launch configuration and exposed schemas.
 
 | Task | Route |
 | --- | --- |
-| Edit an open desktop document, preserve unsaved work, or drive the UI | Bridge MCP connected to that desktop session. Without MCP, use the desktop's TCP control protocol. |
-| Edit files independently, convert formats, or process a folder | Shell calls to `photocraft-cli run`, `convert`, or `batch`, even when bridge MCP is available. |
-| Keep headless documents open across adaptive edits | Reuse an existing headless MCP session, or use `photocraft-cli serve` through a persistent pipe or localhost TCP connection. |
-| Headless work in a harness with MCP but no shell | Headless MCP. |
+| Edit an open desktop document or drive the UI | Bridge MCP connected to that desktop, or its direct control protocol. |
+| Edit independent files, convert formats, or process a folder | Headless CLI, even when live MCP is available. |
+| Keep headless documents open across adaptive edits | Reuse headless MCP, or a persistent CLI `serve` session. |
+| Headless work with MCP but no shell | Headless MCP. |
 
-For live and independent work together, bridge MCP plus CLI/`serve` avoids registering a second MCP tool catalog. Two MCP instances remain an option when both sessions need MCP access. Each MCP process selects one backend at launch; matching tool names do not identify its mode. Check launch configuration to identify the backend and confirm roots cover the intended input and output paths before launching.
+Establish the backend from its configuration and inspected state; matching tool names do not identify the session. Desktop and headless sessions have separate documents and histories. A saved layered file transfers a checkpoint between them, not unsaved state.
 
-Headless and desktop sessions have separate documents and histories. To transfer work, save a layered file and open it in the destination session; this does not synchronize unsaved changes. Confirm the active document with inspection before editing.
+For connection setup or failure, CLI invocation, file access, or differences between live and headless capabilities, read [Connection discovery](references/connection.md).
 
-For connection setup or failures, CLI/`serve` invocation, filesystem errors, or mode-specific tools, read [Connection and file access](references/connection.md). Follow the branch for the chosen session.
+Proceed when the intended session and input/output access are established. Preserve unsaved work before any required restart.
 
-## Discover commands
+## 2. Inspect and discover
 
-The **live registry** is the only reference for command ids and params. Look a command up right before its first use in a session:
+Inspect the target document, active layer, layer types and order, masks, and selection. Obtain ids from that session. Reinspect after switching documents or changing structure; interpret bounds using the schema of the interface returning them.
 
-- MCP: `command_list {filter: "curves"}`
-- CLI: `photocraft-cli commands --json --filter curves`
-- JSON protocol: `engine.commands`
+Look up each engine command before its first use. Discovery entry points:
 
-Each entry has `id`, `params` (`"key":type=default`, ranges as `lo..hi`, choices as `a|b`), and `enabled`. The filter matches ids and labels only, so options hide in params: an ellipse is `select.rect {ellipse: true}`. When a filter finds nothing, search the full `--json` output. `enabled` reflects the open document; from the CLI, with no document open, every document command shows `false`.
+- MCP: `command_list`
+- CLI: `photocraft-cli commands --json`
+- Direct protocol: `engine.commands`
 
-Some engine commands ignore unrecognized params or clamp numbers; success alone does not prove the requested edit happened. Read each command's parameter names, ranges, and choices, then inspect the result. Engine params and MCP tool arguments have separate validation rules.
+Use the installed interface's filtering when available; broaden the search when a parameter supplies the requested behavior rather than a separate command. Read parameter names, types, ranges, defaults, and availability conditions. A disabled command may require a document, selection, or different layer type. CLI arguments, MCP tool schemas, and engine parameters are separate contracts.
 
-## Edit loop
+Proceed when the operation has a discovered command and an unambiguous target in the chosen backend.
 
-1. **Inspect.** Identify the target document, active layer, layer ids, masks, and selection. Use MCP `doc_inspect`, protocol `doc.inspect` in `serve`, or the engine command `document.inspect`. CLI `info <file> --compact` inspects a saved file, not unsaved desktop work.
-2. **Look up, then edit.** Use MCP `command_run`/`command_batch`, CLI `run`, or protocol `engine.execute`/`batch` in `serve`. Prefer adjustment layers and masks when the result should remain editable. Read ids from the current session; use a persistent session when later edits depend on earlier replies.
-3. **Verify.** Compare inspection with the requested layers, settings, and selection. View MCP `doc_render_preview`, `serve`'s `doc.render`, or a PNG converted from a CLI checkpoint. A bridge preview shows the window; a headless preview shows the document. Correct mistakes before saving final outputs; `edit.undo` applies within the current session.
-4. **Save.** For layered edits, save the master (`.pcraft` or `.psd`) before flat exports and inspect the saved layer structure. For conversion-only tasks, save the requested formats. Read any warnings from replies or CLI output. For explicit export quality after bridge editing, save the master, then convert it with the CLI; bridge saves use the app's current settings.
+## 3. Edit, verify, save
 
-Done when the requested result is visually checked, saved outputs are identified, and any format loss or unverified result is reported.
+Make a small edit and inspect its result. Keep dependent edits in one session. Prefer adjustment layers and masks when editability matters.
 
-## Editing traps
+- **Layer state:** check insertion position, resulting layer type, and active layer before the next operation.
+- **Selection state:** establish the intended edit area; inspect the mask created with a new adjustment or fill layer rather than assuming its scope.
+- **Recovery:** after an error, partial batch, or lost reply, inspect what applied before retrying or continuing. A success reply alone does not prove the intended change.
 
-- **New layers land just above the active layer and become active.** Run `layer.selectTop` before adding a layer meant for the top of the stack. After an adjustment, type, or fill layer is added, filters and `image.adjustments.*` fail with `filters need a pixel layer`; select the pixel layer first: `layer.select {layer: <id>}`.
-- **Selections scope edits.** Filters and pixel edits apply only inside an active selection; run `select.deselect` when done. New adjustment/fill layers use a supplied path as a vector mask; otherwise they inherit the selection as a pixel mask, or get a reveal-all mask without a selection. Inspect the resulting mask.
-- **Layer ids belong to the session.** They are shared across its open documents. A new CLI `run` opens a fresh session; inspect again instead of carrying ids across runs.
-- **Bounds come in two formats.** Command replies give `[left, top, right, bottom]`; `doc_inspect` and `info` give `[x, y, width, height]`.
-- **Batches are not transactions.** `command_batch {steps, stop_on_error: true}` stops at the first failure, and the steps before it stay applied.
+Render a preview of the target document and compare it with the requested result. Discover whether the chosen backend returns a document render or a window capture; use a supported alternative when needed.
+
+For layered edits, save an editable master before flat exports. Discover save/export options for the chosen backend, wait for any returned jobs to finish, and inspect the saved structure and warnings. For conversion-only work, verify the requested output format and settings.
+
+Done when the result is visually checked, required outputs are saved, and their paths, format loss, and any unverified behavior are reported.
