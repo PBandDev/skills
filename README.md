@@ -28,6 +28,7 @@ npx skills add PBandDev/skills --skill electrobun
 | --- | --- |
 | `anima-prompting` | Formatting, cleaning, enhancing, or troubleshooting prompts for CircleStone Labs Anima, including tag order, quality/score/safety tags, artist and dataset tags, negative prompts, natural-language captions, LoRA syntax, and generation settings. |
 | `artcraft` | Editing or automating PhotoCraft, VectorCraft, FilmCraft, and EffectCraft through their discovered desktop, headless, and MCP/CLI interfaces. |
+| `breeze-tts-2-prompting` | Writing or fixing Breeze TTS 2 text-to-speech prompts: voice design descriptions, voice direction instructions, clone clips and transcripts, vocal-event tags, and CFG, in ComfyUI, the official CLI/API, or the hosted BreezeBlue API. |
 | `electrobun` | Building, editing, or debugging Electrobun desktop apps, including config, BrowserWindow/BrowserView, typed RPC, `views://` assets, bundling, updates, native renderers, and Electron migration issues. |
 | `lanraragi` | Searching, reading, tagging, uploading, and organizing archives on a LANraragi server through its HTTP API, including API-key setup, endpoint lookup from the server's own spec, and metadata writes that keep existing tags. Supports personal preferences. |
 | `photocraft` | Editing images with PhotoCraft through its MCP tools or `photocraft-cli`, including setup, file access, the live-window bridge, and the traps that make edits fail silently. |

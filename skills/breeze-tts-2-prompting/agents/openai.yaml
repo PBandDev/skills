@@ -1,0 +1,4 @@
+interface:
+  display_name: "Breeze TTS 2 Prompting"
+  short_description: "Write voice design, direction, and clone prompts for Breeze TTS 2."
+  default_prompt: "Use $breeze-tts-2-prompting to write a Breeze TTS 2 prompt for this line."
